@@ -31,13 +31,26 @@ Functionality needed in the program
               0, 0, 0, 0, 0, 0, 0,
             }
 */
+
+/*
+ * List of functionalities to achieve today:
+ * X- make game board
+ * - make tiles
+ * - make button/ way of user putting tiles in the columns on the board
+ * - reflect the user's moves in the array
+ * - use the intelligent agent to choose the next move 
+ *      (there are always 7 possible options on each turn-- unless a column is completely full)
+ * - 
+ */
  
 //import java.io.*;
 import javax.swing.*;
-import java.awt.*;
+
+import javafx.event.ActionEvent;
+
 //import java.awt.Graphics2D;
-import java.awt.Graphics;
-//import java.awt.event;
+import java.awt.*;
+import java.awt.event.*;
 //import java.util.regex.*;
 import java.awt.event.WindowAdapter; 
 import java.awt.event.WindowEvent; 
@@ -54,6 +67,26 @@ public class gameBoard extends JFrame
         setSize(600, 700);
         setLayout(null);
         setVisible(true);
+        JButton c0 = new JButton("0"), c1 = new JButton("1"), c2 = new JButton("2"), 
+                c3 = new JButton("3"), c4 = new JButton("4"), c5 = new JButton("5"),
+                c6 = new JButton("6");
+        
+        int startingX = 75, bWidth = 50, bHeight = 20, spacing = 65;
+        c0.setBounds(startingX, 50, bWidth, bHeight);
+        c1.setBounds(startingX + (spacing), 50, bWidth, bHeight);
+        c2.setBounds(startingX + (2 * spacing), 50, bWidth, bHeight);
+        c3.setBounds(startingX + (3 * spacing), 50, bWidth, bHeight);
+        c4.setBounds(startingX + (4 * spacing), 50, bWidth, bHeight);
+        c5.setBounds(startingX + (5 * spacing), 50, bWidth, bHeight);
+        c6.setBounds(startingX + (6 * spacing), 50, bWidth, bHeight);
+
+        super.add(c0);
+        super.add(c1);
+        super.add(c2);
+        super.add(c3);
+        super.add(c4);
+        super.add(c5);
+        super.add(c6);
 
         // when the window is closed, the program will exit
         addWindowListener(new WindowAdapter() { 
@@ -63,8 +96,27 @@ public class gameBoard extends JFrame
                 System.exit(0); 
             } 
         }); 
+
+        protected void makeRedTile(Graphics g)
+        {
+            int xSpacing = 65, ySpacing = 80, c=0, r=0;
+            Color red = new Color (256, 0, 0);
+            g.setColor(red);
+            g.drawOval(80 + (xSpacing * c), 110 + (ySpacing * r), 50, 50);
+        }
+        
+
+        c0.addActionListener(new ActionListener ()
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+                super.makeRedTile(g);
+            }
+        });
+
     }
     
+
     public void paint (Graphics g)
     {
        
@@ -76,8 +128,7 @@ public class gameBoard extends JFrame
         g.fillRect(50, 100, 500, 500);
         g.setColor(black);
 
-        int xSpacing = 65;
-        int ySpacing = 80;
+        int xSpacing = 65, ySpacing = 80;
 
         for (int r = 0; r < 6; r++)
         {
