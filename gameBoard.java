@@ -54,6 +54,7 @@ import java.util.*;
 import java.awt.*;
 //import java.util.regex.*;
 import java.awt.event.*; 
+//import java.swing.UIManager.*;
 
 
 
@@ -67,14 +68,20 @@ public class gameBoard extends JFrame
 
     public gameBoard ()
     {
-        //create and display gui
+        /* ---------------------------------------------------------GUI SETUP--------------------------------------------- */
         setTitle("Connect Four Intelligent Agent");
         setSize(800, 700);
         setLayout(null);
         setVisible(true);
         JButton c0 = new JButton("0"), c1 = new JButton("1"), c2 = new JButton("2"), 
                 c3 = new JButton("3"), c4 = new JButton("4"), c5 = new JButton("5"),
-                c6 = new JButton("6"), start = new JButton("Start Game!"), quitGame = new JButton("Quit Game");
+                c6 = new JButton("6"), start = new JButton("Start Game!"), quitGame = new JButton("Quit Game"),
+                r0c0 = new JButton(), r0c1 = new JButton(), r0c2 = new JButton(), r0c3 = new JButton(), r0c4 = new JButton(), r0c5 = new JButton(), r0c6 = new JButton(),
+                r1c0 = new JButton(), r1c1 = new JButton(), r1c2 = new JButton(), r1c3 = new JButton(), r1c4 = new JButton(), r1c5 = new JButton(), r1c6 = new JButton(),
+                r2c0 = new JButton(), r2c1 = new JButton(), r2c2 = new JButton(), r2c3 = new JButton(), r2c4 = new JButton(), r2c5 = new JButton(), r2c6 = new JButton(),
+                r3c0 = new JButton(), r3c1 = new JButton(), r3c2 = new JButton(), r3c3 = new JButton(), r3c4 = new JButton(), r3c5 = new JButton(), r3c6 = new JButton(),
+                r4c0 = new JButton(), r4c1 = new JButton(), r4c2 = new JButton(), r4c3 = new JButton(), r4c4 = new JButton(), r4c5 = new JButton(), r4c6 = new JButton(),
+                r5c0 = new JButton(), r5c1 = new JButton(), r5c2 = new JButton(), r5c3 = new JButton(), r5c4 = new JButton(), r5c5 = new JButton(), r5c6 = new JButton();
         
         int startingX = 75, bWidth = 50, bHeight = 20, spacing = 65;
         c0.setBounds(startingX, 50, bWidth, bHeight);
@@ -124,13 +131,66 @@ public class gameBoard extends JFrame
             }
         };
 
+        int xSpacing = 65, ySpacing = 80;
+
+        // need to use unclickable buttons to represent the blank spaces where the tiles are
+        
+        r0c0.setBounds(80 + (xSpacing * 0), 110 + (ySpacing * 0 ), 50, 50);
+        r1c0.setBounds(80 + (xSpacing * 0), 110 + (ySpacing * 1 ), 50, 50);
+        r2c0.setBounds(80 + (xSpacing * 0), 110 + (ySpacing * 2 ), 50, 50);
+        r3c0.setBounds(80 + (xSpacing * 0), 110 + (ySpacing * 3 ), 50, 50);
+        r4c0.setBounds(80 + (xSpacing * 0), 110 + (ySpacing * 4 ), 50, 50);
+        r5c0.setBounds(80 + (xSpacing * 0), 110 + (ySpacing * 5 ), 50, 50);
+        
+        r0c1.setBounds(80 + (xSpacing * 1), 110 + (ySpacing * 0 ), 50, 50);
+        r1c1.setBounds(80 + (xSpacing * 1), 110 + (ySpacing * 1 ), 50, 50);
+        r2c1.setBounds(80 + (xSpacing * 1), 110 + (ySpacing * 2 ), 50, 50);
+        r3c1.setBounds(80 + (xSpacing * 1), 110 + (ySpacing * 3 ), 50, 50);
+        r4c1.setBounds(80 + (xSpacing * 1), 110 + (ySpacing * 4 ), 50, 50);
+        r5c1.setBounds(80 + (xSpacing * 1), 110 + (ySpacing * 5 ), 50, 50);
+
+        r0c2.setBounds(80 + (xSpacing * 2), 110 + (ySpacing * 0 ), 50, 50);
+        r1c2.setBounds(80 + (xSpacing * 2), 110 + (ySpacing * 1 ), 50, 50);
+        r2c2.setBounds(80 + (xSpacing * 2), 110 + (ySpacing * 2 ), 50, 50);
+        r3c2.setBounds(80 + (xSpacing * 2), 110 + (ySpacing * 3 ), 50, 50);
+        r4c2.setBounds(80 + (xSpacing * 2), 110 + (ySpacing * 4 ), 50, 50);
+        r5c2.setBounds(80 + (xSpacing * 2), 110 + (ySpacing * 5 ), 50, 50);
+
+        r0c3.setBounds(80 + (xSpacing * 3), 110 + (ySpacing * 0 ), 50, 50);
+        r1c3.setBounds(80 + (xSpacing * 3), 110 + (ySpacing * 1 ), 50, 50);
+        r2c3.setBounds(80 + (xSpacing * 3), 110 + (ySpacing * 2 ), 50, 50);
+        r3c3.setBounds(80 + (xSpacing * 3), 110 + (ySpacing * 3 ), 50, 50);
+        r4c3.setBounds(80 + (xSpacing * 3), 110 + (ySpacing * 4 ), 50, 50);
+        r5c3.setBounds(80 + (xSpacing * 3), 110 + (ySpacing * 5 ), 50, 50);
+
+        r0c4.setBounds(80 + (xSpacing * 4), 110 + (ySpacing * 0 ), 50, 50);
+        r1c4.setBounds(80 + (xSpacing * 4), 110 + (ySpacing * 1 ), 50, 50);
+        r2c4.setBounds(80 + (xSpacing * 4), 110 + (ySpacing * 2 ), 50, 50);
+        r3c4.setBounds(80 + (xSpacing * 4), 110 + (ySpacing * 3 ), 50, 50);
+        r4c4.setBounds(80 + (xSpacing * 4), 110 + (ySpacing * 4 ), 50, 50);
+        r5c4.setBounds(80 + (xSpacing * 4), 110 + (ySpacing * 5 ), 50, 50);
+
+        r0c5.setBounds(80 + (xSpacing * 5), 110 + (ySpacing * 0 ), 50, 50);
+        r1c5.setBounds(80 + (xSpacing * 5), 110 + (ySpacing * 1 ), 50, 50);
+        r2c5.setBounds(80 + (xSpacing * 5), 110 + (ySpacing * 2 ), 50, 50);
+        r3c5.setBounds(80 + (xSpacing * 5), 110 + (ySpacing * 3 ), 50, 50);
+        r4c5.setBounds(80 + (xSpacing * 5), 110 + (ySpacing * 4 ), 50, 50);
+        r5c5.setBounds(80 + (xSpacing * 5), 110 + (ySpacing * 5 ), 50, 50);
+
+        r0c6.setBounds(80 + (xSpacing * 6), 110 + (ySpacing * 0 ), 50, 50);
+        r1c6.setBounds(80 + (xSpacing * 6), 110 + (ySpacing * 1 ), 50, 50);
+        r2c6.setBounds(80 + (xSpacing * 6), 110 + (ySpacing * 2 ), 50, 50);
+        r3c6.setBounds(80 + (xSpacing * 6), 110 + (ySpacing * 3 ), 50, 50);
+        r4c6.setBounds(80 + (xSpacing * 6), 110 + (ySpacing * 4 ), 50, 50);
+        r5c6.setBounds(80 + (xSpacing * 6), 110 + (ySpacing * 5 ), 50, 50);
+
         start.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (!playerMoveMade)
-                {
+                //if (!playerMoveMade)
+                //{
                     //paint the lowest possible token in this column a specific color (depending on whose turn it is)
                     /*
                     * 
@@ -143,9 +203,9 @@ public class gameBoard extends JFrame
                     tileColor = Color.YELLOW;
                     int xSpacing = 65, ySpacing = 80, c=0, r=5;
                     drawingPanel.repaint(80 + (xSpacing * c), 110 + (ySpacing * r), 50, 50);
-                    playerMoveMade = true;
+                    //playerMoveMade = true;
                     whoseTurn++;
-                }
+                //}
                 
             }
 
@@ -359,16 +419,58 @@ public class gameBoard extends JFrame
         add(c6);
         add(quitGame);
 
+        add(r0c0);
+        add(r1c0);
+        add(r2c0);
+        add(r3c0);
+        add(r4c0);
+        add(r5c0);
+
+        add(r0c1);
+        add(r1c1);
+        add(r2c1);
+        add(r3c1);
+        add(r4c1);
+        add(r5c1);
+
+        add(r0c2);
+        add(r1c2);
+        add(r2c2);
+        add(r3c2);
+        add(r4c2);
+        add(r5c2);
+
+
+        add(r0c3);
+        add(r1c3);
+        add(r2c3);
+        add(r3c3);
+        add(r4c3);
+        add(r5c3);
+
+        add(r0c4);
+        add(r1c4);
+        add(r2c4);
+        add(r3c4);
+        add(r4c4);
+        add(r5c4);
+
+        add(r0c5);
+        add(r1c5);
+        add(r2c5);
+        add(r3c5);
+        add(r4c5);
+        add(r5c5);
+
+        add(r0c6);
+        add(r1c6);
+        add(r2c6);
+        add(r3c6);
+        add(r4c6);
+        add(r5c6);
+
         // need to check for whose turn it is (needs to be CPU turn) and if the user has clicked a column button
         //if ()
-
-
-
-        
-
-
-
-
 
 
 
