@@ -55,6 +55,7 @@ import java.awt.*;
 //import java.util.regex.*;
 import java.awt.event.*; 
 //import java.swing.UIManager.*;
+//import java.util.concurrent.TimeUnit;
 
 
 
@@ -63,8 +64,17 @@ public class gameBoard extends JFrame
 {
     Color tileColor = Color.BLACK;
     int whoseTurn = 0, turnCounter = 0;
-    int[] CPUMove = CPUTurn(whoseTurn);
+    //int[] CPUMove = CPUTurn(whoseTurn);
     boolean playerMoveMade = false, startPressed = false;
+
+    // tracking occupied spaces on board
+    int[] occupiedSpaces0 = {0,0,0,0,0,0};
+    int[] occupiedSpaces1 = {0,0,0,0,0,0};
+    int[] occupiedSpaces2 = {0,0,0,0,0,0};
+    int[] occupiedSpaces3 = {0,0,0,0,0,0};
+    int[] occupiedSpaces4 = {0,0,0,0,0,0};
+    int[] occupiedSpaces5 = {0,0,0,0,0,0};
+    int[] occupiedSpaces6 = {0,0,0,0,0,0};
 
     public gameBoard ()
     {
@@ -72,7 +82,8 @@ public class gameBoard extends JFrame
         setTitle("Connect Four Intelligent Agent");
         setSize(800, 700);
         setLayout(null);
-        setVisible(true);
+        JLabel PlayerTurnMessage = new JLabel("");
+        PlayerTurnMessage.setBounds( 20, 10, 400, 20);
         JButton c0 = new JButton("0"), c1 = new JButton("1"), c2 = new JButton("2"), 
                 c3 = new JButton("3"), c4 = new JButton("4"), c5 = new JButton("5"),
                 c6 = new JButton("6"), start = new JButton("Start Game!"), quitGame = new JButton("Quit Game"),
@@ -96,6 +107,17 @@ public class gameBoard extends JFrame
         start.setFont(new Font("Arial", Font.PLAIN, 20));
         quitGame.setFont(new Font("Arial", Font.PLAIN, 20));
 
+        //organizing buttons in each column
+        JButton[] column0 = {r0c0, r1c0, r2c0, r3c0, r4c0, r5c0};
+        JButton[] column1 = {r0c1, r1c1, r2c1, r3c1, r4c1, r5c1};
+        JButton[] column2 = {r0c2, r1c2, r2c2, r3c2, r4c2, r5c2};
+        JButton[] column3 = {r0c3, r1c3, r2c3, r3c3, r4c3, r5c3};
+        JButton[] column4 = {r0c4, r1c4, r2c4, r3c4, r4c4, r5c4};
+        JButton[] column5 = {r0c5, r1c5, r2c5, r3c5, r4c5, r5c5};
+        JButton[] column6 = {r0c6, r1c6, r2c6, r3c6, r4c6, r5c6};
+
+        JButton[][] columns = {column0, column1, column2, column3, column4, column5, column6};
+
         // when the window is closed, the program will exit
         addWindowListener(new WindowAdapter() { 
             @Override
@@ -106,36 +128,12 @@ public class gameBoard extends JFrame
         }); 
 
 
-        JPanel drawingPanel = new JPanel()
-        {
-            @Override
-            protected void paintComponent(Graphics g) 
-            {
-                super.paintComponent(g);
-        
-                g.drawRect(50, 100, 500, 500);
-                g.setColor(Color.BLUE);
-                g.fillRect(50, 100, 500, 500);
-                g.setColor(tileColor);
-
-                int xSpacing = 65, ySpacing = 80;
-
-                for (int r = 0; r < 6; r++)
-                {
-                    for(int c = 0; c < 7; c++)
-                    {
-                        g.drawOval(80 + (xSpacing * c), 110 + (ySpacing * r), 50, 50);
-                        g.fillOval(80 + (xSpacing * c), 110 + (ySpacing * r), 50, 50);
-                    }
-                }
-            }
-        };
-
         int xSpacing = 65, ySpacing = 80;
+    
 
         // need to use unclickable buttons to represent the blank spaces where the tiles are
         
-        r0c0.setBounds(80 + (xSpacing * 0), 110 + (ySpacing * 0 ), 50, 50);
+        r0c0.setBounds(80 + (65 * 0), 110 + (80 * 0 ), 50, 50);
         r1c0.setBounds(80 + (xSpacing * 0), 110 + (ySpacing * 1 ), 50, 50);
         r2c0.setBounds(80 + (xSpacing * 0), 110 + (ySpacing * 2 ), 50, 50);
         r3c0.setBounds(80 + (xSpacing * 0), 110 + (ySpacing * 3 ), 50, 50);
@@ -189,23 +187,35 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //if (!playerMoveMade)
-                //{
-                    //paint the lowest possible token in this column a specific color (depending on whose turn it is)
-                    /*
-                    * 
-                    * - find the lowest token
-                    * - check the availability of other tokens in the column. 
-                    *      > this can be done by either checking color or by storing the color values in an 1D array. such as {0,0,0,1,2,1}
-                    *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
-                    */
-                    // change the color and trigger a repaint of the specific area
-                    tileColor = Color.YELLOW;
-                    int xSpacing = 65, ySpacing = 80, c=0, r=5;
-                    drawingPanel.repaint(80 + (xSpacing * c), 110 + (ySpacing * r), 50, 50);
-                    //playerMoveMade = true;
-                    whoseTurn++;
-                //}
+                /*
+                 * choose a random number to determine who will go first
+                 * display who will go first and their color
+                 * 
+                 * player1 -user - red
+                 * player2- cpu - yellow
+                 */
+
+                 Random startingPlayer = new Random();
+                 whoseTurn = startingPlayer.nextInt(2);
+
+                 tileColor = Color.YELLOW;
+
+                 if (whoseTurn == 1)
+                 {
+                    // TODO I would like a delay to make it appear like the CPU is thinking for 2-3 seconds
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes First- YELLOW");
+
+                    //CPU goes first
+                    CPUTurn(columns);
+                    
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+
+                 }
+                 else
+                 {
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes First- RED (Select a column to start your turn)");
+
+                 }
                 
             }
 
@@ -229,11 +239,33 @@ public class gameBoard extends JFrame
                     */
                     // change the color and trigger a repaint of the specific area
                     tileColor = Color.RED;
-                    int xSpacing = 65, ySpacing = 80, c=0, r=5;
-                    drawingPanel.repaint(80 + (xSpacing * c), 110 + (ySpacing * r), 50, 50);
-                    playerMoveMade = true;
-                    whoseTurn++;
+                    
+                    //int[] occupiedSpaces = {0,0,0,0,0,0};
+                    //JButton[] column0 = {r0c0, r1c0, r2c0, r3c0, r4c0, r5c0};
+
+                    for ( int r = 5; r >= 0; r--)
+                    {
+                        if (occupiedSpaces0[r] == 0)
+                        { // if the lowest row in the column is empty
+                            // assign it to whose turn it is
+                            // in this case, the column buttons are only for use of player 1 (the human player)
+
+                            occupiedSpaces0[r] = 1;
+                            column0[r].setBackground(tileColor);
+                            playerMoveMade = true;
+                            whoseTurn++;
+                            break;
+                        }
+                    }
+
+                    // issue warning "this column is full, choose another."
+                    
                 }
+
+                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                CPUTurn(columns);
+                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                playerMoveMade = false;
                 
             }
 
@@ -254,11 +286,43 @@ public class gameBoard extends JFrame
                     *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
                     */
                     // change the color and trigger a repaint of the specific area
+                   //paint the lowest possible token in this column a specific color (depending on whose turn it is)
+                    /*
+                    * 
+                    * - find the lowest token
+                    * - check the availability of other tokens in the column. 
+                    *      > this can be done by either checking color or by storing the color values in an 1D array. such as {0,0,0,1,2,1}
+                    *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
+                    */
+                    // change the color and trigger a repaint of the specific area
+
+                    //TODO MAke a function for this, would be a lot easier
                     tileColor = Color.RED;
-                    int xSpacing = 65, ySpacing = 80, c=0, r=5;
-                    drawingPanel.repaint(80 + (xSpacing * c), 110 + (ySpacing * r), 50, 50);
-                    playerMoveMade = true;
-                    whoseTurn++;
+                    
+                    //int[] occupiedSpaces = {0,0,0,0,0,0};
+                    //JButton[] column1 = {r0c1, r1c1, r2c1, r3c1, r4c1, r5c1};
+
+                    for ( int r = 5; r >= 0; r--)
+                    {
+                        if (occupiedSpaces1[r] == 0)
+                        { // if the lowest row in the column is empty
+                            // assign it to whose turn it is
+                            // in this case, the column buttons are only for use of player 1 (the human player)
+
+                            occupiedSpaces1[r] = 1;
+                            column1[r].setBackground(tileColor);
+                            playerMoveMade = true;
+                            whoseTurn++;
+                            break;
+                        }
+                    }
+
+                    // issue warning "this column is full, choose another."
+
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                    CPUTurn(columns);
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                    //playerMoveMade = false;
                 }
             }
 
@@ -280,11 +344,33 @@ public class gameBoard extends JFrame
                     */
                     // change the color and trigger a repaint of the specific area
                     tileColor = Color.RED;
-                    int xSpacing = 65, ySpacing = 80, c=0, r=5;
-                    drawingPanel.repaint(80 + (xSpacing * c), 110 + (ySpacing * r), 50, 50);
-                    playerMoveMade = true;
-                    whoseTurn++;
+                    
+                    //int[] occupiedSpaces = {0,0,0,0,0,0};
+                    //JButton[] column2 = {r0c2, r1c2, r2c2, r3c2, r4c2, r5c2};
+
+                    for ( int r = 5; r >= 0; r--)
+                    {
+                        if (occupiedSpaces2[r] == 0)
+                        { // if the lowest row in the column is empty
+                            // assign it to whose turn it is
+                            // in this case, the column buttons are only for use of player 1 (the human player)
+
+                            occupiedSpaces2[r] = 1;
+                            column2[r].setBackground(tileColor);
+                            playerMoveMade = true;
+                            whoseTurn++;
+                            break;
+                        }
+                    }
+
+                    // issue warning "this column is full, choose another."
+
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                    CPUTurn(columns);
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                    playerMoveMade = false;
                 }
+                
 
             }
 
@@ -306,10 +392,31 @@ public class gameBoard extends JFrame
                     */
                     // change the color and trigger a repaint of the specific area
                     tileColor = Color.RED;
-                    int xSpacing = 65, ySpacing = 80, c=0, r=5;
-                    drawingPanel.repaint(80 + (xSpacing * c), 110 + (ySpacing * r), 50, 50);
-                    playerMoveMade = true;
-                    whoseTurn++;
+                    
+                    //int[] occupiedSpaces = {0,0,0,0,0,0};
+                    //JButton[] column3 = {r0c3, r1c3, r2c3, r3c3, r4c3, r5c3};
+
+                    for ( int r = 5; r >= 0; r--)
+                    {
+                        if (occupiedSpaces3[r] == 0)
+                        { // if the lowest row in the column is empty
+                            // assign it to whose turn it is
+                            // in this case, the column buttons are only for use of player 1 (the human player)
+
+                            occupiedSpaces3[r] = 1;
+                            column3[r].setBackground(tileColor);
+                            playerMoveMade = true;
+                            whoseTurn++;
+                            break;
+                        }
+                    }
+
+                    // issue warning "this column is full, choose another."
+
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                    CPUTurn(columns);
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                    playerMoveMade = false;
                 }
 
             }
@@ -332,10 +439,30 @@ public class gameBoard extends JFrame
                     */
                     // change the color and trigger a repaint of the specific area
                     tileColor = Color.RED;
-                    int xSpacing = 65, ySpacing = 80, c=0, r=5;
-                    drawingPanel.repaint(80 + (xSpacing * c), 110 + (ySpacing * r), 50, 50);
-                    playerMoveMade = true;
-                    whoseTurn++;
+                    
+                    //int[] occupiedSpaces = {0,0,0,0,0,0};
+                    //JButton[] column4 = {r0c4, r1c4, r2c4, r3c4, r4c4, r5c4};
+
+                    for ( int r = 5; r >= 0; r--)
+                    {
+                        if (occupiedSpaces4[r] == 0)
+                        { // if the lowest row in the column is empty
+                            // assign it to whose turn it is
+                            // in this case, the column buttons are only for use of player 1 (the human player)
+
+                            occupiedSpaces4[r] = 1;
+                            column4[r].setBackground(tileColor);
+                            playerMoveMade = true;
+                            whoseTurn++;
+                            break;
+                        }
+                    }
+
+                    // issue warning "this column is full, choose another."
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                    CPUTurn(columns);
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                    playerMoveMade = false;
                 }
 
             }
@@ -358,10 +485,30 @@ public class gameBoard extends JFrame
                     */
                     // change the color and trigger a repaint of the specific area
                     tileColor = Color.RED;
-                    int xSpacing = 65, ySpacing = 80, c=0, r=5;
-                    drawingPanel.repaint(80 + (xSpacing * c), 110 + (ySpacing * r), 50, 50);
-                    playerMoveMade = true;
-                    whoseTurn++;
+                    
+                    //int[] occupiedSpaces = {0,0,0,0,0,0};
+                    //JButton[] column5 = {r0c5, r1c5, r2c5, r3c5, r4c5, r5c5};
+
+                    for ( int r = 5; r >= 0; r--)
+                    {
+                        if (occupiedSpaces5[r] == 0)
+                        { // if the lowest row in the column is empty
+                            // assign it to whose turn it is
+                            // in this case, the column buttons are only for use of player 1 (the human player)
+
+                            occupiedSpaces5[r] = 1;
+                            column5[r].setBackground(tileColor);
+                            playerMoveMade = true;
+                            whoseTurn++;
+                            break;
+                        }
+                    }
+
+                    // issue warning "this column is full, choose another."
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                    CPUTurn(columns);
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                    playerMoveMade = false;
                 }
             }
 
@@ -383,9 +530,31 @@ public class gameBoard extends JFrame
                     */
                     // change the color and trigger a repaint of the specific area
                     tileColor = Color.RED;
-                    int xSpacing = 65, ySpacing = 80, c=0, r=5;
-                    drawingPanel.repaint(80 + (xSpacing * c), 110 + (ySpacing * r), 50, 50);
-                    playerMoveMade = true;
+                    
+                    //int[] occupiedSpaces = {0,0,0,0,0,0};
+                    //JButton[] column6 = {r0c6, r1c6, r2c6, r3c6, r4c6, r5c6};
+
+                    for ( int r = 5; r >= 0; r--)
+                    {
+                        if (occupiedSpaces6[r] == 0)
+                        { // if the lowest row in the column is empty
+                            // assign it to whose turn it is
+                            // in this case, the column buttons are only for use of player 1 (the human player)
+
+                            occupiedSpaces6[r] = 1;
+                            column6[r].setBackground(tileColor);
+                            playerMoveMade = true;
+                            whoseTurn++;
+                            break;
+                        }
+                    }
+
+                    // issue warning "this column is full, choose another."
+
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                    CPUTurn(columns);
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                    playerMoveMade = false;
                 }
 
             }
@@ -405,9 +574,6 @@ public class gameBoard extends JFrame
         });
         
 
-        // make the drawing panel the same size as the window
-        drawingPanel.setBounds(0, 0, 600, 700);
-        add(drawingPanel);
 
         add(c0);
         add(start);
@@ -468,39 +634,51 @@ public class gameBoard extends JFrame
         add(r3c6);
         add(r4c6);
         add(r5c6);
+        add(PlayerTurnMessage);
 
-        // need to check for whose turn it is (needs to be CPU turn) and if the user has clicked a column button
-        //if ()
+        setVisible(true);
 
 
 
     }
 
     // make a function to determine the results of the CPU's turn
-    public int[] CPUTurn( int turnCounter)
+    public void CPUTurn( JButton columns[][] )
     {
-        int[] move = new int[2];
+        
+        int[] move = new int[2]; // format is {row, column}
 
-        if (turnCounter == 0)
-        {
-            Random randRow = new Random(), randCol = new Random();
-                
-            move[0] = randRow.nextInt(6);
-                
+        //if (turnCounter == 0)
+        //{
+            // choose a random column
+            Random randCol = new Random();
             move[1] = randCol.nextInt(7);
+            
+            // array of the column arrays
 
-        }
-        else
-        {
-            Random randRow = new Random(), randCol = new Random();
-                
-            move[0] = randRow.nextInt(6);
-                
-            move[1] = randCol.nextInt(7);
+            int[][] occupiedSpacesN = {occupiedSpaces0, occupiedSpaces1, occupiedSpaces2, occupiedSpaces3, occupiedSpaces4, occupiedSpaces5};
+           
+            // choose an available row from the specified column
+            for ( int r = 5; r >= 0; r--)
+            {
+                if (occupiedSpacesN[move[1]][r] == 0)
+                { // if the lowest row in the column is empty
+                    // assign it to whose turn it is
+                    // in this case, the column buttons are only for use of player 1 (the human player)
 
-        }
+                    // find the correct column array and set the button in the correct row to yellow
+                    columns[move[1]][r].setBackground(Color.YELLOW);
 
-        return move;
+                    // set the occupied space to 2 to represent player 2's piece
+                    occupiedSpacesN[move[1]][r] = 2;
+
+
+                    break;
+                }
+            }
+
+            turnCounter++;
+            
     }
 
         
