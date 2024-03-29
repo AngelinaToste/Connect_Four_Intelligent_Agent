@@ -227,46 +227,7 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (!playerMoveMade)
-                {
-                    //paint the lowest possible token in this column a specific color (depending on whose turn it is)
-                    /*
-                    * 
-                    * - find the lowest token
-                    * - check the availability of other tokens in the column. 
-                    *      > this can be done by either checking color or by storing the color values in an 1D array. such as {0,0,0,1,2,1}
-                    *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
-                    */
-                    // change the color and trigger a repaint of the specific area
-                    tileColor = Color.RED;
-                    
-                    //int[] occupiedSpaces = {0,0,0,0,0,0};
-                    //JButton[] column0 = {r0c0, r1c0, r2c0, r3c0, r4c0, r5c0};
-
-                    for ( int r = 5; r >= 0; r--)
-                    {
-                        if (occupiedSpaces0[r] == 0)
-                        { // if the lowest row in the column is empty
-                            // assign it to whose turn it is
-                            // in this case, the column buttons are only for use of player 1 (the human player)
-
-                            occupiedSpaces0[r] = 1;
-                            column0[r].setBackground(tileColor);
-                            playerMoveMade = true;
-                            //whoseTurn++;
-                            break;
-                        }
-                    }
-
-                    // issue warning "this column is full, choose another."
-                    
-                }
-
-                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
-                CPUTurn(columns);
-                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
-                playerMoveMade = false;
-                
+                playerMove(0, columns, PlayerTurnMessage);  
             }
 
         });
@@ -275,55 +236,7 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (!playerMoveMade)
-                {
-                    //paint the lowest possible token in this column a specific color (depending on whose turn it is)
-                    /*
-                    * 
-                    * - find the lowest token
-                    * - check the availability of other tokens in the column. 
-                    *      > this can be done by either checking color or by storing the color values in an 1D array. such as {0,0,0,1,2,1}
-                    *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
-                    */
-                    // change the color and trigger a repaint of the specific area
-                   //paint the lowest possible token in this column a specific color (depending on whose turn it is)
-                    /*
-                    * 
-                    * - find the lowest token
-                    * - check the availability of other tokens in the column. 
-                    *      > this can be done by either checking color or by storing the color values in an 1D array. such as {0,0,0,1,2,1}
-                    *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
-                    */
-                    // change the color and trigger a repaint of the specific area
-
-                    //TODO MAke a function for this, would be a lot easier
-                    tileColor = Color.RED;
-                    
-                    //int[] occupiedSpaces = {0,0,0,0,0,0};
-                    //JButton[] column1 = {r0c1, r1c1, r2c1, r3c1, r4c1, r5c1};
-
-                    for ( int r = 5; r >= 0; r--)
-                    {
-                        if (occupiedSpaces1[r] == 0)
-                        { // if the lowest row in the column is empty
-                            // assign it to whose turn it is
-                            // in this case, the column buttons are only for use of player 1 (the human player)
-
-                            occupiedSpaces1[r] = 1;
-                            column1[r].setBackground(tileColor);
-                            playerMoveMade = true;
-                            //whoseTurn++;
-                            break;
-                        }
-                    }
-
-                    // issue warning "this column is full, choose another."
-
-                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
-                    CPUTurn(columns);
-                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
-                    playerMoveMade = false;
-                }
+                playerMove(1, columns, PlayerTurnMessage); 
             }
 
         });
@@ -332,46 +245,7 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (!playerMoveMade)
-                {
-                    //paint the lowest possible token in this column a specific color (depending on whose turn it is)
-                    /*
-                    * 
-                    * - find the lowest token
-                    * - check the availability of other tokens in the column. 
-                    *      > this can be done by either checking color or by storing the color values in an 1D array. such as {0,0,0,1,2,1}
-                    *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
-                    */
-                    // change the color and trigger a repaint of the specific area
-                    tileColor = Color.RED;
-                    
-                    //int[] occupiedSpaces = {0,0,0,0,0,0};
-                    //JButton[] column2 = {r0c2, r1c2, r2c2, r3c2, r4c2, r5c2};
-
-                    for ( int r = 5; r >= 0; r--)
-                    {
-                        if (occupiedSpaces2[r] == 0)
-                        { // if the lowest row in the column is empty
-                            // assign it to whose turn it is
-                            // in this case, the column buttons are only for use of player 1 (the human player)
-
-                            occupiedSpaces2[r] = 1;
-                            column2[r].setBackground(tileColor);
-                            playerMoveMade = true;
-                            //whoseTurn++;
-                            break;
-                        }
-                    }
-
-                    // issue warning "this column is full, choose another."
-
-                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
-                    CPUTurn(columns);
-                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
-                    playerMoveMade = false;
-                }
-                
-
+                playerMove(2, columns, PlayerTurnMessage); 
             }
 
         });
@@ -380,45 +254,7 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (!playerMoveMade)
-                {
-                    //paint the lowest possible token in this column a specific color (depending on whose turn it is)
-                    /*
-                    * 
-                    * - find the lowest token
-                    * - check the availability of other tokens in the column. 
-                    *      > this can be done by either checking color or by storing the color values in an 1D array. such as {0,0,0,1,2,1}
-                    *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
-                    */
-                    // change the color and trigger a repaint of the specific area
-                    tileColor = Color.RED;
-                    
-                    //int[] occupiedSpaces = {0,0,0,0,0,0};
-                    //JButton[] column3 = {r0c3, r1c3, r2c3, r3c3, r4c3, r5c3};
-
-                    for ( int r = 5; r >= 0; r--)
-                    {
-                        if (occupiedSpaces3[r] == 0)
-                        { // if the lowest row in the column is empty
-                            // assign it to whose turn it is
-                            // in this case, the column buttons are only for use of player 1 (the human player)
-
-                            occupiedSpaces3[r] = 1;
-                            column3[r].setBackground(tileColor);
-                            playerMoveMade = true;
-                            //whoseTurn++;
-                            break;
-                        }
-                    }
-
-                    // issue warning "this column is full, choose another."
-
-                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
-                    CPUTurn(columns);
-                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
-                    playerMoveMade = false;
-                }
-
+                playerMove(3, columns, PlayerTurnMessage); 
             }
 
         });
@@ -427,44 +263,7 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (!playerMoveMade)
-                {
-                    //paint the lowest possible token in this column a specific color (depending on whose turn it is)
-                    /*
-                    * 
-                    * - find the lowest token
-                    * - check the availability of other tokens in the column. 
-                    *      > this can be done by either checking color or by storing the color values in an 1D array. such as {0,0,0,1,2,1}
-                    *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
-                    */
-                    // change the color and trigger a repaint of the specific area
-                    tileColor = Color.RED;
-                    
-                    //int[] occupiedSpaces = {0,0,0,0,0,0};
-                    //JButton[] column4 = {r0c4, r1c4, r2c4, r3c4, r4c4, r5c4};
-
-                    for ( int r = 5; r >= 0; r--)
-                    {
-                        if (occupiedSpaces4[r] == 0)
-                        { // if the lowest row in the column is empty
-                            // assign it to whose turn it is
-                            // in this case, the column buttons are only for use of player 1 (the human player)
-
-                            occupiedSpaces4[r] = 1;
-                            column4[r].setBackground(tileColor);
-                            playerMoveMade = true;
-                            whoseTurn++;
-                            break;
-                        }
-                    }
-
-                    // issue warning "this column is full, choose another."
-                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
-                    CPUTurn(columns);
-                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
-                    playerMoveMade = false;
-                }
-
+                playerMove(4, columns, PlayerTurnMessage); 
             }
 
         });
@@ -473,43 +272,7 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (!playerMoveMade)
-                {
-                    //paint the lowest possible token in this column a specific color (depending on whose turn it is)
-                    /*
-                    * 
-                    * - find the lowest token
-                    * - check the availability of other tokens in the column. 
-                    *      > this can be done by either checking color or by storing the color values in an 1D array. such as {0,0,0,1,2,1}
-                    *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
-                    */
-                    // change the color and trigger a repaint of the specific area
-                    tileColor = Color.RED;
-                    
-                    //int[] occupiedSpaces = {0,0,0,0,0,0};
-                    //JButton[] column5 = {r0c5, r1c5, r2c5, r3c5, r4c5, r5c5};
-
-                    for ( int r = 5; r >= 0; r--)
-                    {
-                        if (occupiedSpaces5[r] == 0)
-                        { // if the lowest row in the column is empty
-                            // assign it to whose turn it is
-                            // in this case, the column buttons are only for use of player 1 (the human player)
-
-                            occupiedSpaces5[r] = 1;
-                            column5[r].setBackground(tileColor);
-                            playerMoveMade = true;
-                            //whoseTurn++;
-                            break;
-                        }
-                    }
-
-                    // issue warning "this column is full, choose another."
-                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
-                    CPUTurn(columns);
-                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
-                    playerMoveMade = false;
-                }
+                playerMove(5, columns, PlayerTurnMessage); 
             }
 
         });
@@ -518,44 +281,7 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (!playerMoveMade)
-                {
-                    //paint the lowest possible token in this column a specific color (depending on whose turn it is)
-                    /*
-                    * 
-                    * - find the lowest token
-                    * - check the availability of other tokens in the column. 
-                    *      > this can be done by either checking color or by storing the color values in an 1D array. such as {0,0,0,1,2,1}
-                    *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
-                    */
-                    // change the color and trigger a repaint of the specific area
-                    tileColor = Color.RED;
-                    
-                    //int[] occupiedSpaces = {0,0,0,0,0,0};
-                    //JButton[] column6 = {r0c6, r1c6, r2c6, r3c6, r4c6, r5c6};
-
-                    for ( int r = 5; r >= 0; r--)
-                    {
-                        if (occupiedSpaces6[r] == 0)
-                        { // if the lowest row in the column is empty
-                            // assign it to whose turn it is
-                            // in this case, the column buttons are only for use of player 1 (the human player)
-
-                            occupiedSpaces6[r] = 1;
-                            column6[r].setBackground(tileColor);
-                            playerMoveMade = true;
-                            //whoseTurn++;
-                            break;
-                        }
-                    }
-
-                    // issue warning "this column is full, choose another."
-
-                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
-                    CPUTurn(columns);
-                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
-                    playerMoveMade = false;
-                }
+                playerMove(6, columns, PlayerTurnMessage); 
 
             }
 
@@ -684,7 +410,56 @@ public class gameBoard extends JFrame
             
     }
 
-        
+    public void switchTurns(Boolean playerMoveMade, JButton[][] columns)
+    {
+        if (playerMoveMade)
+        {
+            CPUTurn(columns);
+        }
+        else
+        {
+            //playerMove(colNum, columns, PlayerTurnMessage);
+        }
+    }
+
+    public void playerMove(int colNum, JButton columns[][], JLabel PlayerTurnMessage)
+    {
+        if (!playerMoveMade)
+        {
+            //paint the lowest possible token in this column a specific color (depending on whose turn it is)
+            /*
+            * - find the lowest token
+            * - check the availability of other tokens in the column. 
+            *      > this can be done by either checking color or by storing the color values in an 1D array. such as {0,0,0,1,2,1}
+            *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
+            */
+            // set the new tile color to red for the user
+            tileColor = Color.RED;
+            int[][] occupiedSpacesN = {occupiedSpaces0, occupiedSpaces1, occupiedSpaces2, occupiedSpaces3, occupiedSpaces4, occupiedSpaces5};
+
+            for ( int r = 5; r >= 0; r--)
+            {
+                if (occupiedSpacesN[colNum][r] == 0)
+                { // if the lowest row in the column is empty
+                    // assign it to whose turn it is
+                    // in this case, the column buttons are only for use of player 1 (the human player)
+
+                    occupiedSpacesN[colNum][r] = 1;
+                    columns[colNum][r].setBackground(tileColor);
+                    playerMoveMade = true;
+                    break;
+                }
+            }
+
+            // issue warning "this column is full, choose another."
+
+            PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+            CPUTurn(columns);
+            PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+            playerMoveMade = false;
+        }
+
+    }
 
     public static void main (String[] args)
     {
