@@ -253,7 +253,7 @@ public class gameBoard extends JFrame
                             occupiedSpaces0[r] = 1;
                             column0[r].setBackground(tileColor);
                             playerMoveMade = true;
-                            whoseTurn++;
+                            //whoseTurn++;
                             break;
                         }
                     }
@@ -312,7 +312,7 @@ public class gameBoard extends JFrame
                             occupiedSpaces1[r] = 1;
                             column1[r].setBackground(tileColor);
                             playerMoveMade = true;
-                            whoseTurn++;
+                            //whoseTurn++;
                             break;
                         }
                     }
@@ -322,7 +322,7 @@ public class gameBoard extends JFrame
                     PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
                     CPUTurn(columns);
                     PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
-                    //playerMoveMade = false;
+                    playerMoveMade = false;
                 }
             }
 
@@ -358,7 +358,7 @@ public class gameBoard extends JFrame
                             occupiedSpaces2[r] = 1;
                             column2[r].setBackground(tileColor);
                             playerMoveMade = true;
-                            whoseTurn++;
+                            //whoseTurn++;
                             break;
                         }
                     }
@@ -406,7 +406,7 @@ public class gameBoard extends JFrame
                             occupiedSpaces3[r] = 1;
                             column3[r].setBackground(tileColor);
                             playerMoveMade = true;
-                            whoseTurn++;
+                            //whoseTurn++;
                             break;
                         }
                     }
@@ -499,7 +499,7 @@ public class gameBoard extends JFrame
                             occupiedSpaces5[r] = 1;
                             column5[r].setBackground(tileColor);
                             playerMoveMade = true;
-                            whoseTurn++;
+                            //whoseTurn++;
                             break;
                         }
                     }
@@ -544,7 +544,7 @@ public class gameBoard extends JFrame
                             occupiedSpaces6[r] = 1;
                             column6[r].setBackground(tileColor);
                             playerMoveMade = true;
-                            whoseTurn++;
+                            //whoseTurn++;
                             break;
                         }
                     }
@@ -645,13 +645,12 @@ public class gameBoard extends JFrame
     // make a function to determine the results of the CPU's turn
     public void CPUTurn( JButton columns[][] )
     {
-        try { Thread.sleep(3000);} 
+        // a sleep of 0 lets another thread take control for a bit -- a brief break
+        try { Thread.sleep(0); Thread.sleep(3000);} 
         catch (Exception e){}
         
         int[] move = new int[2]; // format is {row, column}
 
-        //if (turnCounter == 0)
-        //{
             // choose a random column
             Random randCol = new Random();
             move[1] = randCol.nextInt(7);
