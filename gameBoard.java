@@ -645,6 +645,8 @@ public class gameBoard extends JFrame
     // make a function to determine the results of the CPU's turn
     public void CPUTurn( JButton columns[][] )
     {
+        try { Thread.sleep(3000);} 
+        catch (Exception e){}
         
         int[] move = new int[2]; // format is {row, column}
 
@@ -667,6 +669,8 @@ public class gameBoard extends JFrame
                     // in this case, the column buttons are only for use of player 1 (the human player)
 
                     // find the correct column array and set the button in the correct row to yellow
+                    
+
                     columns[move[1]][r].setBackground(Color.YELLOW);
 
                     // set the occupied space to 2 to represent player 2's piece
