@@ -67,6 +67,8 @@ public class gameBoard extends JFrame
     //int[] CPUMove = CPUTurn(whoseTurn);
     boolean playerMoveMade = false, startPressed = false;
 
+    JFrame self;
+
     // tracking occupied spaces on board
     int[] occupiedSpaces0 = {0,0,0,0,0,0};
     int[] occupiedSpaces1 = {0,0,0,0,0,0};
@@ -78,6 +80,7 @@ public class gameBoard extends JFrame
 
     public gameBoard ()
     {
+
         /* ---------------------------------------------------------GUI SETUP--------------------------------------------- */
         setTitle("Connect Four Intelligent Agent");
         setSize(800, 700);
@@ -182,6 +185,9 @@ public class gameBoard extends JFrame
         r4c6.setBounds(80 + (xSpacing * 6), 110 + (ySpacing * 4 ), 50, 50);
         r5c6.setBounds(80 + (xSpacing * 6), 110 + (ySpacing * 5 ), 50, 50);
 
+
+        /*----------------------- BUTTON ACTION LISTENER SETUP  --------------------------------------------------------------- */
+
         start.addActionListener(new ActionListener()
         {
             @Override
@@ -202,8 +208,9 @@ public class gameBoard extends JFrame
 
                  if (whoseTurn == 1)
                  {
-                    // TODO I would like a delay to make it appear like the CPU is thinking for 2-3 seconds
                     PlayerTurnMessage.setText("Player 2 (CPU) Goes First- YELLOW");
+                    try {Thread.sleep(2000);}
+                    catch (Exception f){}
 
                     //CPU goes first
                     CPUTurn(columns);
@@ -227,7 +234,14 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(0, columns, PlayerTurnMessage);  
+                playerMove(0, columns);  
+                
+                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+
+                CPUTurn(columns);
+                
+                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                playerMoveMade = false;
             }
 
         });
@@ -236,7 +250,13 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(1, columns, PlayerTurnMessage); 
+                playerMove(1, columns); 
+
+                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                
+                CPUTurn(columns);
+                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                playerMoveMade = false;
             }
 
         });
@@ -245,7 +265,13 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(2, columns, PlayerTurnMessage); 
+                playerMove(2, columns); 
+
+                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                
+                CPUTurn(columns);
+                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                playerMoveMade = false;
             }
 
         });
@@ -254,7 +280,13 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(3, columns, PlayerTurnMessage); 
+                playerMove(3, columns); 
+
+                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                
+                CPUTurn(columns);
+                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                playerMoveMade = false;
             }
 
         });
@@ -263,7 +295,13 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(4, columns, PlayerTurnMessage); 
+                playerMove(4, columns); 
+
+                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                
+                CPUTurn(columns);
+                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                playerMoveMade = false;
             }
 
         });
@@ -272,7 +310,13 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(5, columns, PlayerTurnMessage); 
+                playerMove(5, columns); 
+
+                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                
+                CPUTurn(columns);
+                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                playerMoveMade = false;
             }
 
         });
@@ -281,7 +325,12 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(6, columns, PlayerTurnMessage); 
+                playerMove(6, columns); 
+                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                
+                CPUTurn(columns);
+                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                playerMoveMade = false;
 
             }
 
@@ -371,9 +420,6 @@ public class gameBoard extends JFrame
     // make a function to determine the results of the CPU's turn
     public void CPUTurn( JButton columns[][] )
     {
-        // a sleep of 0 lets another thread take control for a bit -- a brief break
-        try { Thread.sleep(0); Thread.sleep(3000);} 
-        catch (Exception e){}
         
         int[] move = new int[2]; // format is {row, column}
 
@@ -405,7 +451,7 @@ public class gameBoard extends JFrame
                     break;
                 }
             }
-
+            playerMoveMade = false;
             turnCounter++;
             
     }
@@ -422,7 +468,7 @@ public class gameBoard extends JFrame
         }
     }
 
-    public void playerMove(int colNum, JButton columns[][], JLabel PlayerTurnMessage)
+    public void playerMove(int colNum, JButton columns[][])
     {
         if (!playerMoveMade)
         {
@@ -446,6 +492,8 @@ public class gameBoard extends JFrame
 
                     occupiedSpacesN[colNum][r] = 1;
                     columns[colNum][r].setBackground(tileColor);
+                    columns[colNum][r].repaint();
+                    //invokeAndWait();
                     playerMoveMade = true;
                     break;
                 }
@@ -453,10 +501,7 @@ public class gameBoard extends JFrame
 
             // issue warning "this column is full, choose another."
 
-            PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
-            CPUTurn(columns);
-            PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
-            playerMoveMade = false;
+            
         }
 
     }
@@ -467,7 +512,10 @@ public class gameBoard extends JFrame
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-              new gameBoard().setVisible(true);
+                gameBoard game = new gameBoard();
+                game.self = game;
+                game.setVisible(true);
+              
             }
           });
     }  
