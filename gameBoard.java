@@ -35,27 +35,21 @@ Functionality needed in the program
 /*
  * List of functionalities to achieve today:
  * X- make game board
- * - make tiles
+ * X- make tiles
  * X- make button/ way of user putting tiles in the columns on the board
- * - reflect the user's moves in the array
+ * X- reflect the user's moves in the array
  * - use the intelligent agent to choose the next move 
  *      (there are always 7 possible options on each turn-- unless a column is completely full)
- * - 
+ * - win validation
  */
 
-
- 
-//import java.io.*;
 import javax.swing.*;
 import java.util.*;
-//import javafx.scene.shape.Circle;
 
-//import java.awt.Graphics2D;
 import java.awt.*;
-//import java.util.regex.*;
+
 import java.awt.event.*; 
-//import java.swing.UIManager.*;
-//import java.util.concurrent.TimeUnit;
+
 
 
 
