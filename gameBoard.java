@@ -41,6 +41,8 @@ Functionality needed in the program
  * - use the intelligent agent to choose the next move 
  *      (there are always 7 possible options on each turn-- unless a column is completely full)
  * - win validation
+ * - also include tie validation
+ * 
  */
 
 import javax.swing.*;
@@ -60,6 +62,7 @@ public class gameBoard extends JFrame
     int whoseTurn = 0, turnCounter = 0;
     //int[] CPUMove = CPUTurn(whoseTurn);
     boolean playerMoveMade = false, startPressed = false;
+    int userTurnCounter = 0, CPUTurnCounter = 0;
 
     JFrame self;
 
@@ -203,11 +206,9 @@ public class gameBoard extends JFrame
                  if (whoseTurn == 1)
                  {
                     PlayerTurnMessage.setText("Player 2 (CPU) Goes First- YELLOW");
-                    try {Thread.sleep(2000);}
-                    catch (Exception f){}
 
                     //CPU goes first
-                    CPUTurn(columns);
+                    CPUTurn(columns, PlayerTurnMessage);
                     
                     PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
 
@@ -228,11 +229,13 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(0, columns);  
+                playerMove(0, columns, PlayerTurnMessage);  
+
+                
                 
                 PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
 
-                CPUTurn(columns);
+                CPUTurn(columns, PlayerTurnMessage);
                 
                 PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
                 playerMoveMade = false;
@@ -244,11 +247,11 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(1, columns); 
+                playerMove(1, columns, PlayerTurnMessage); 
 
                 PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
                 
-                CPUTurn(columns);
+                CPUTurn(columns, PlayerTurnMessage);
                 PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
                 playerMoveMade = false;
             }
@@ -259,11 +262,11 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(2, columns); 
+                playerMove(2, columns, PlayerTurnMessage); 
 
                 PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
                 
-                CPUTurn(columns);
+                CPUTurn(columns, PlayerTurnMessage);
                 PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
                 playerMoveMade = false;
             }
@@ -274,11 +277,11 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(3, columns); 
+                playerMove(3, columns, PlayerTurnMessage); 
 
                 PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
                 
-                CPUTurn(columns);
+                CPUTurn(columns, PlayerTurnMessage);
                 PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
                 playerMoveMade = false;
             }
@@ -289,11 +292,11 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(4, columns); 
+                playerMove(4, columns, PlayerTurnMessage); 
 
                 PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
                 
-                CPUTurn(columns);
+                CPUTurn(columns, PlayerTurnMessage);
                 PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
                 playerMoveMade = false;
             }
@@ -304,11 +307,11 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(5, columns); 
+                playerMove(5, columns, PlayerTurnMessage); 
 
                 PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
                 
-                CPUTurn(columns);
+                CPUTurn(columns, PlayerTurnMessage);
                 PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
                 playerMoveMade = false;
             }
@@ -319,10 +322,10 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(6, columns); 
+                playerMove(6, columns, PlayerTurnMessage); 
                 PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
                 
-                CPUTurn(columns);
+                CPUTurn(columns, PlayerTurnMessage);
                 PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
                 playerMoveMade = false;
 
@@ -412,7 +415,7 @@ public class gameBoard extends JFrame
     }
 
     // make a function to determine the results of the CPU's turn
-    public void CPUTurn( JButton columns[][] )
+    public void CPUTurn( JButton columns[][], JLabel PlayerTurnMessage )
     {
         
         int[] move = new int[2]; // format is {row, column}
@@ -423,7 +426,7 @@ public class gameBoard extends JFrame
             
             // array of the column arrays
 
-            int[][] occupiedSpacesN = {occupiedSpaces0, occupiedSpaces1, occupiedSpaces2, occupiedSpaces3, occupiedSpaces4, occupiedSpaces5};
+            int[][] occupiedSpacesN = {occupiedSpaces0, occupiedSpaces1, occupiedSpaces2, occupiedSpaces3, occupiedSpaces4, occupiedSpaces5, occupiedSpaces6};
            
             // choose an available row from the specified column
             for ( int r = 5; r >= 0; r--)
@@ -446,23 +449,17 @@ public class gameBoard extends JFrame
                 }
             }
             playerMoveMade = false;
-            turnCounter++;
+            CPUTurnCounter++;
+             
+            if  (CPUTurnCounter > 3 )
+            {
+                isWin(2, occupiedSpacesN);
+            }
             
     }
 
-    public void switchTurns(Boolean playerMoveMade, JButton[][] columns)
-    {
-        if (playerMoveMade)
-        {
-            CPUTurn(columns);
-        }
-        else
-        {
-            //playerMove(colNum, columns, PlayerTurnMessage);
-        }
-    }
 
-    public void playerMove(int colNum, JButton columns[][])
+    public void playerMove(int colNum, JButton columns[][], JLabel PlayerTurnMessage)
     {
         if (!playerMoveMade)
         {
@@ -475,7 +472,7 @@ public class gameBoard extends JFrame
             */
             // set the new tile color to red for the user
             tileColor = Color.RED;
-            int[][] occupiedSpacesN = {occupiedSpaces0, occupiedSpaces1, occupiedSpaces2, occupiedSpaces3, occupiedSpaces4, occupiedSpaces5};
+            int[][] occupiedSpacesN = {occupiedSpaces0, occupiedSpaces1, occupiedSpaces2, occupiedSpaces3, occupiedSpaces4, occupiedSpaces5, occupiedSpaces6};
 
             for ( int r = 5; r >= 0; r--)
             {
@@ -493,12 +490,74 @@ public class gameBoard extends JFrame
                 }
             }
 
+            userTurnCounter++;
+             
+            if  ( userTurnCounter > 3)
+            {
+                isWin( 1, occupiedSpacesN);
+                //System.out.println("1");
+                //displayWinner(PlayerTurnMessage, 1);
+                //PlayerTurnMessage.setText("Player 1 (YOU) WINS");
+            }
+            
             // issue warning "this column is full, choose another."
 
             
         }
 
     }
+
+    public Boolean isWin( int playerNum, int occupiedSpacesN[][])
+    { //int tilesPlayed,
+        // purpose: check if there are more than 4 tiles played by each player, check for col row and diag rows of 4
+        // parameters 
+            //tilesPlayed - num of tiles played to determine if there are enough tiles for 4 to be in a row
+            //playerNum - the player that is being checked for a win
+        // return  boolean true if a win exists
+        Boolean isWin = false;
+
+        //if (tilesPlayed > 3)
+        //{
+        int inACol = 0; // counter to determine how many of the same tile are consecutive in a column ex r0c0 r1c0 c2c0 r3c0
+        // check for connect 4 in each column
+
+        for(int c = 0; c < 8; c++) // for number of columns
+        {
+            for (int r = 0; r < 7; r++) // for number of rows in a column
+            {
+                if ( inACol == 0 && occupiedSpacesN[c][r] == playerNum)
+                {
+                    inACol++;
+                }
+                else if ( inACol < 4 && occupiedSpacesN[c][r] == playerNum)
+                {
+                    inACol++;
+                    if (inACol == 4)
+                    {
+                        isWin = true; 
+                        JOptionPane.showMessageDialog(self, "WINNER IS PLAYER " + playerNum + "!\nClick 'Start Game' to play again or 'Exit Game' to close the game.");
+                        break;
+
+                    }
+                
+                }
+                else 
+                {
+                    // reset inACol
+                    inACol = 0;
+                }
+            }
+        }
+
+        //}
+       // else
+        //{
+            //isWin = false;
+        //}
+
+        return isWin;
+    }
+
 
     public static void main (String[] args)
     {
