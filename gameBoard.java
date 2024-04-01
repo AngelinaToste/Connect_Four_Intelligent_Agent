@@ -695,7 +695,7 @@ public class gameBoard extends JFrame
         //FIXME need to account for all types and locations of diagonals
         /*------------------------------CHECK IF WIN IS IN AN INCREASING DIAGONAL----------------------------------------------------- */
         int inADiagonal = 0;
-        // r5c0 r4c1 r3c2 r2c3
+        
         int allPossibleIncDiag[][] = {{},{},{},{},{},{}};
 
 
