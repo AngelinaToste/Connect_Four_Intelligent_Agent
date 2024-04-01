@@ -522,6 +522,7 @@ public class gameBoard extends JFrame
         int inACol = 0; // counter to determine how many of the same tile are consecutive in a column ex r0c0 r1c0 c2c0 r3c0
         // check for connect 4 in each column
 
+        //FIXME program not checking for wins in cols beyond c0, possibly an issue with the outer for loop??
         for(int c = 0; c < 8; c++) // for number of columns
         {
             for (int r = 0; r < 7; r++) // for number of rows in a column
