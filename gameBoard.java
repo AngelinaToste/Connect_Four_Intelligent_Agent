@@ -488,6 +488,12 @@ public class gameBoard extends JFrame
                     playerMoveMade = true;
                     break;
                 }
+                if ( r == 0 && occupiedSpacesN[colNum][r] > 0)
+                {
+                    //TODO test this code?
+                    // issue warning "this column is full, choose another."
+                    JOptionPane.showMessageDialog(self, "This column is full. Please choose another.");
+                }
             }
 
             userTurnCounter++;
@@ -495,13 +501,8 @@ public class gameBoard extends JFrame
             if  ( userTurnCounter > 3)
             {
                 isWin( 1, occupiedSpacesN);
-                //System.out.println("1");
-                //displayWinner(PlayerTurnMessage, 1);
-                //PlayerTurnMessage.setText("Player 1 (YOU) WINS");
             }
             
-            // issue warning "this column is full, choose another."
-
             
         }
 
@@ -548,12 +549,6 @@ public class gameBoard extends JFrame
                 }
             }
         }
-
-        //}
-       // else
-        //{
-            //isWin = false;
-        //}
 
         return isWin;
     }
