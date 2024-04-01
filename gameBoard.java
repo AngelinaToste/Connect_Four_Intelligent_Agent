@@ -60,8 +60,7 @@ public class gameBoard extends JFrame
 {
     Color tileColor = Color.BLACK;
     int whoseTurn = 0, turnCounter = 0;
-    //int[] CPUMove = CPUTurn(whoseTurn);
-    boolean playerMoveMade = false, startPressed = false;
+    boolean playerMoveMade = false, startPressed = false, isCleared = false;
     int userTurnCounter = 0, CPUTurnCounter = 0;
 
     JFrame self;
@@ -82,7 +81,7 @@ public class gameBoard extends JFrame
         setTitle("Connect Four Intelligent Agent");
         setSize(800, 700);
         setLayout(null);
-        JLabel PlayerTurnMessage = new JLabel("Click the Start button to begin a game.");
+        JLabel PlayerTurnMessage = new JLabel("Click the 'Start Game!' button to begin a game.");
         PlayerTurnMessage.setBounds( 20, 10, 400, 20);
         JButton c0 = new JButton("0"), c1 = new JButton("1"), c2 = new JButton("2"), 
                 c3 = new JButton("3"), c4 = new JButton("4"), c5 = new JButton("5"),
@@ -208,7 +207,7 @@ public class gameBoard extends JFrame
                     PlayerTurnMessage.setText("Player 2 (CPU) Goes First- YELLOW");
 
                     //CPU goes first
-                    CPUTurn(columns, PlayerTurnMessage);
+                    CPUTurn(columns);
                     
                     PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
 
@@ -229,15 +228,28 @@ public class gameBoard extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                playerMove(0, columns, PlayerTurnMessage);  
-
+                playerMove(0, columns, PlayerTurnMessage); 
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                }
                 
                 
-                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
-
-                CPUTurn(columns, PlayerTurnMessage);
-                
-                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                CPUTurn(columns);
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                }
                 playerMoveMade = false;
             }
 
@@ -248,11 +260,27 @@ public class gameBoard extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 playerMove(1, columns, PlayerTurnMessage); 
-
-                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                }
                 
-                CPUTurn(columns, PlayerTurnMessage);
-                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                
+                CPUTurn(columns);
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                }
                 playerMoveMade = false;
             }
 
@@ -263,11 +291,27 @@ public class gameBoard extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 playerMove(2, columns, PlayerTurnMessage); 
-
-                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                }
                 
-                CPUTurn(columns, PlayerTurnMessage);
-                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                
+                CPUTurn(columns);
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                }
                 playerMoveMade = false;
             }
 
@@ -278,11 +322,27 @@ public class gameBoard extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 playerMove(3, columns, PlayerTurnMessage); 
-
-                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                }
                 
-                CPUTurn(columns, PlayerTurnMessage);
-                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                
+                CPUTurn(columns);
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                }
                 playerMoveMade = false;
             }
 
@@ -293,11 +353,27 @@ public class gameBoard extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 playerMove(4, columns, PlayerTurnMessage); 
-
-                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                }
                 
-                CPUTurn(columns, PlayerTurnMessage);
-                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                
+                CPUTurn(columns);
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                }
                 playerMoveMade = false;
             }
 
@@ -308,11 +384,27 @@ public class gameBoard extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 playerMove(5, columns, PlayerTurnMessage); 
-
-                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                }
                 
-                CPUTurn(columns, PlayerTurnMessage);
-                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                
+                CPUTurn(columns);
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                }
                 playerMoveMade = false;
             }
 
@@ -323,10 +415,27 @@ public class gameBoard extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 playerMove(6, columns, PlayerTurnMessage); 
-                PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 2 (CPU) Goes Next- YELLOW");
+                }
                 
-                CPUTurn(columns, PlayerTurnMessage);
-                PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                
+                CPUTurn(columns);
+                if(isCleared)
+                {
+                    PlayerTurnMessage.setText("Click the 'Start Game!' button to begin a game."); 
+                    isCleared = false;
+                }
+                else
+                {
+                    PlayerTurnMessage.setText("Player 1 (YOU) Goes Next- RED (Select a column to start your turn)");
+                }
                 playerMoveMade = false;
 
             }
@@ -415,10 +524,11 @@ public class gameBoard extends JFrame
     }
 
     // make a function to determine the results of the CPU's turn
-    public void CPUTurn( JButton columns[][], JLabel PlayerTurnMessage )
+    public void CPUTurn( JButton columns[][] )
     {
-        
-        int[] move = new int[2]; // format is {row, column}
+        if (playerMoveMade)
+        {
+            int[] move = new int[2]; // format is {row, column}
 
             // choose a random column
             Random randCol = new Random();
@@ -453,9 +563,9 @@ public class gameBoard extends JFrame
              
             if  (CPUTurnCounter > 3 && isWin(2, occupiedSpacesN))
             {
-                clearBoard(occupiedSpacesN, columns, PlayerTurnMessage);
+                clearBoard(occupiedSpacesN, columns);
             }
-            
+        }     
     }
 
 
@@ -500,7 +610,8 @@ public class gameBoard extends JFrame
              
             if  ( userTurnCounter > 3 && isWin( 1, occupiedSpacesN))
             {
-                clearBoard(occupiedSpacesN, columns, PlayerTurnMessage);
+                clearBoard(occupiedSpacesN, columns);
+                playerMoveMade =  false;
             }
             
             
@@ -575,15 +686,75 @@ public class gameBoard extends JFrame
                 }
                 else 
                 {
-                    // reset inACol
+                    // reset inARow
                     inARow = 0;
                 }
             }
         }
+
+        //FIXME need to account for all types and locations of diagonals
+        /*------------------------------CHECK IF WIN IS IN AN INCREASING DIAGONAL----------------------------------------------------- */
+        int inADiagonal = 0;
+        // r5c0 r4c1 r3c2 r2c3
+        int allPossibleIncDiag[][] = {{},{},{},{},{},{}};
+
+
+
+        for (int c = 0, r = 5; c < 7 && r >= 0; c++, r--) // c for number of columns (0-6) and r for number of rows in a column (0-5)
+        {
+            if ( inADiagonal == 0 && occupiedSpacesN[c][r] == playerNum)
+            {
+                inADiagonal++;
+            }
+            else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
+            {
+                inADiagonal++;
+                if (inADiagonal == 4)
+                {
+                    isWin = true; 
+                    JOptionPane.showMessageDialog(self, " INCREASING DIAGONAL WINNER IS PLAYER " + playerNum + "!\nClick 'Start Game' to play again or 'Exit Game' to close the game.");
+                    break;
+                }
+            
+            }
+            else 
+            {
+                // reset inADiagonal
+                inADiagonal = 0;
+            }
+        }
+
+        /*------------------------------CHECK IF WIN IS IN A DECREASING DIAGONAL----------------------------------------------------- */
+        //  r0c0 r1c1 r3c3 r4c4 Sr5c5
+        for (int c = 0, r = 0; c < 7 && r < 6; c++, r++) // c for number of columns (0-6) and r for number of rows in a column (0-5)
+        {
+            if ( inADiagonal == 0 && occupiedSpacesN[c][r] == playerNum)
+            {
+                inADiagonal++;
+            }
+            else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
+            {
+                inADiagonal++;
+                if (inADiagonal == 4)
+                {
+                    isWin = true; 
+                    JOptionPane.showMessageDialog(self, " DECREASING DIAGONAL WINNER IS PLAYER " + playerNum + "!\nClick 'Start Game' to play again or 'Exit Game' to close the game.");
+                    break;
+                }
+            
+            }
+            else 
+            {
+                // reset inADiagonal
+                inADiagonal = 0;
+            }
+        }
+
+
         return isWin;
     }
 
-    public void clearBoard (int occupiedSpacesN[][], JButton columns[][], JLabel PlayerTurnMessage) // FIXME, CPU is still going, jlabel not changing
+    public void clearBoard (int occupiedSpacesN[][], JButton columns[][]) // FIXME, CPU is still going, jlabel not changing
     {
         
         for(int r = 5; r >= 0; r--) // for number of rows in a column (0-5)
@@ -596,11 +767,10 @@ public class gameBoard extends JFrame
 
                 // clear all of the colors of the buttons in columns
                 columns[c][r].setBackground(null);
+                
             }
         }
-
-        // change the player turn message back to the opening message
-        PlayerTurnMessage.setText("Click the Start button to begin a game.");
+        isCleared = true;
 
     }
 
