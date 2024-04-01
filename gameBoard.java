@@ -82,7 +82,7 @@ public class gameBoard extends JFrame
         setTitle("Connect Four Intelligent Agent");
         setSize(800, 700);
         setLayout(null);
-        JLabel PlayerTurnMessage = new JLabel("");
+        JLabel PlayerTurnMessage = new JLabel("Click the Start button to begin a game.");
         PlayerTurnMessage.setBounds( 20, 10, 400, 20);
         JButton c0 = new JButton("0"), c1 = new JButton("1"), c2 = new JButton("2"), 
                 c3 = new JButton("3"), c4 = new JButton("4"), c5 = new JButton("5"),
@@ -451,9 +451,9 @@ public class gameBoard extends JFrame
             playerMoveMade = false;
             CPUTurnCounter++;
              
-            if  (CPUTurnCounter > 3 )
+            if  (CPUTurnCounter > 3 && isWin(2, occupiedSpacesN))
             {
-                isWin(2, occupiedSpacesN);
+                clearBoard(occupiedSpacesN, columns, PlayerTurnMessage);
             }
             
     }
@@ -498,9 +498,9 @@ public class gameBoard extends JFrame
 
             userTurnCounter++;
              
-            if  ( userTurnCounter > 3)
+            if  ( userTurnCounter > 3 && isWin( 1, occupiedSpacesN))
             {
-                isWin( 1, occupiedSpacesN);
+                clearBoard(occupiedSpacesN, columns, PlayerTurnMessage);
             }
             
             
@@ -508,7 +508,7 @@ public class gameBoard extends JFrame
 
     }
 
-    public Boolean isWin( int playerNum, int occupiedSpacesN[][])
+    public Boolean isWin( int playerNum, int occupiedSpacesN[][]) //TODO need to handle case of a draw/ tie
     { //int tilesPlayed,
         // purpose: check if there are more than 4 tiles played by each player, check for col row and diag rows of 4
         // parameters 
@@ -517,16 +517,16 @@ public class gameBoard extends JFrame
         // return  boolean true if a win exists
         Boolean isWin = false;
 
-        //if (tilesPlayed > 3)
-        //{
+        /*------------------------------CHECK IF WIN IS IN A COLUMN----------------------------------------------------- */
         int inACol = 0; // counter to determine how many of the same tile are consecutive in a column ex r0c0 r1c0 c2c0 r3c0
         // check for connect 4 in each column
 
         for(int c = 0; c < 7; c++) // for number of columns (0-6)
         {
-            for (int r = 0; r < 5; r++) // for number of rows in a column (0-5)
-            {
-                if ( inACol == 0 && occupiedSpacesN[c][r] == playerNum)
+            for (int r = 5; r >= 0; r--) // for number of rows in a column (0-5)
+            { // starts from bottom of col to top because all of the pieces go to the lowest possible place in a column
+                // potentially slightly more effecient, start with area with most tiles (bottom) first
+                if ( inACol == 0 && occupiedSpacesN[c][r] == playerNum) 
                 {
                     inACol++;
                 }
@@ -536,7 +536,8 @@ public class gameBoard extends JFrame
                     if (inACol == 4)
                     {
                         isWin = true; 
-                        JOptionPane.showMessageDialog(self, "WINNER IS PLAYER " + playerNum + "!\nClick 'Start Game' to play again or 'Exit Game' to close the game.");
+                        JOptionPane.showMessageDialog(self, "COLUMN WINNER IS PLAYER " + playerNum + "!\nClick 'Start Game' to play again or 'Exit Game' to close the game.");
+                        
                         break;
 
                     }
@@ -550,9 +551,58 @@ public class gameBoard extends JFrame
             }
         }
 
+        /*------------------------------CHECK IF WIN IS IN A ROW----------------------------------------------------- */
+        int inARow = 0;
+        for(int r = 5; r >= 0; r--) // for number of rows in a column (0-5)
+        {
+            for (int c = 0; c < 7; c++) // for number of columns (0-6)
+            {
+                if ( inARow == 0 && occupiedSpacesN[c][r] == playerNum)
+                {
+                    inARow++;
+                }
+                else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
+                {
+                    inARow++;
+                    if (inARow == 4)
+                    {
+                        isWin = true; 
+                        JOptionPane.showMessageDialog(self, "ROW WINNER IS PLAYER " + playerNum + "!\nClick 'Start Game' to play again or 'Exit Game' to close the game.");
+                        break;
+
+                    }
+                
+                }
+                else 
+                {
+                    // reset inACol
+                    inARow = 0;
+                }
+            }
+        }
         return isWin;
     }
 
+    public void clearBoard (int occupiedSpacesN[][], JButton columns[][], JLabel PlayerTurnMessage) // FIXME, CPU is still going, jlabel not changing
+    {
+        
+        for(int r = 5; r >= 0; r--) // for number of rows in a column (0-5)
+        {
+            for (int c = 0; c < 7; c++) // for number of columns (0-6)
+            {
+                // clear all of the values placed in occupied spaces
+                    // set the values in the row arrays to 0
+                occupiedSpacesN[c][r] = 0;
+
+                // clear all of the colors of the buttons in columns
+                columns[c][r].setBackground(null);
+            }
+        }
+
+        // change the player turn message back to the opening message
+        PlayerTurnMessage.setText("Click the Start button to begin a game.");
+
+    }
 
     public static void main (String[] args)
     {
