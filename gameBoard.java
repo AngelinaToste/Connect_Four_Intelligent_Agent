@@ -628,6 +628,7 @@ public class gameBoard extends JFrame
         // return  boolean true if a win exists
         Boolean isWin = false;
 
+        //FIXME? is there an issue with column checking or are threads causing it to trigger too early?
         /*------------------------------CHECK IF WIN IS IN A COLUMN----------------------------------------------------- */
         int inACol = 0; // counter to determine how many of the same tile are consecutive in a column ex r0c0 r1c0 c2c0 r3c0
         // check for connect 4 in each column
@@ -662,6 +663,8 @@ public class gameBoard extends JFrame
             }
         }
 
+        //FIXME--- sometimes incorrect win calling?could also be calling a win too early?
+
         /*------------------------------CHECK IF WIN IS IN A ROW----------------------------------------------------- */
         int inARow = 0;
         for(int r = 5; r >= 0; r--) // for number of rows in a column (0-5)
@@ -694,62 +697,71 @@ public class gameBoard extends JFrame
 
         //FIXME need to account for all types and locations of diagonals
         /*------------------------------CHECK IF WIN IS IN AN INCREASING DIAGONAL----------------------------------------------------- */
-        int inADiagonal = 0;
-        
-        int allPossibleIncDiag[][] = {{},{},{},{},{},{}};
+        int inAnIncDiagonal = 0;
+        // all possible increasing diagonal starting positions
+        int allPossibleIncDiag[][] = {{3, 0},{4, 0},{5, 0},{5, 1},{5, 2},{5, 3}};
 
-
-
-        for (int c = 0, r = 5; c < 7 && r >= 0; c++, r--) // c for number of columns (0-6) and r for number of rows in a column (0-5)
+        for (int i = 0; i < allPossibleIncDiag.length; i++)
         {
-            if ( inADiagonal == 0 && occupiedSpacesN[c][r] == playerNum)
+
+            for (int c = allPossibleIncDiag[i][1], r = allPossibleIncDiag[i][0]; c < 7 && r >= 0; c++, r--) // c for number of columns (0-6) and r for number of rows in a column (0-5)
             {
-                inADiagonal++;
-            }
-            else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
-            {
-                inADiagonal++;
-                if (inADiagonal == 4)
+                if ( inAnIncDiagonal == 0 && occupiedSpacesN[c][r] == playerNum)
                 {
-                    isWin = true; 
-                    JOptionPane.showMessageDialog(self, " INCREASING DIAGONAL WINNER IS PLAYER " + playerNum + "!\nClick 'Start Game' to play again or 'Exit Game' to close the game.");
-                    break;
+                    inAnIncDiagonal++;
                 }
-            
-            }
-            else 
-            {
-                // reset inADiagonal
-                inADiagonal = 0;
+                else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
+                {
+                    inAnIncDiagonal++;
+                    if (inAnIncDiagonal == 4)
+                    {
+                        isWin = true; 
+                        JOptionPane.showMessageDialog(self, " INCREASING DIAGONAL WINNER IS PLAYER " + playerNum + "!\nClick 'Start Game' to play again or 'Exit Game' to close the game.");
+                        break;
+                    }
+                
+                }
+                else 
+                {
+                    // reset inADiagonal
+                    inAnIncDiagonal = 0;
+                }
             }
         }
 
         /*------------------------------CHECK IF WIN IS IN A DECREASING DIAGONAL----------------------------------------------------- */
-        //  r0c0 r1c1 r3c3 r4c4 Sr5c5
-        for (int c = 0, r = 0; c < 7 && r < 6; c++, r++) // c for number of columns (0-6) and r for number of rows in a column (0-5)
+
+        // all possible decreasing diagonal starting positions
+        int allPossibleDecDiag[][] = {{0, 0},{1, 0},{2, 0},{0, 1},{0, 2},{0, 3}};
+        int inADecDiagonal = 0;
+
+        for (int i = 0; i < allPossibleDecDiag.length; i++)
         {
-            if ( inADiagonal == 0 && occupiedSpacesN[c][r] == playerNum)
+
+            for (int c = allPossibleDecDiag[i][1], r = allPossibleDecDiag[i][0]; c < 7 && r < 5; c++, r++) // c for number of columns (0-6) and r for number of rows in a column (0-5)
             {
-                inADiagonal++;
-            }
-            else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
-            {
-                inADiagonal++;
-                if (inADiagonal == 4)
+                if ( inADecDiagonal == 0 && occupiedSpacesN[c][r] == playerNum)
                 {
-                    isWin = true; 
-                    JOptionPane.showMessageDialog(self, " DECREASING DIAGONAL WINNER IS PLAYER " + playerNum + "!\nClick 'Start Game' to play again or 'Exit Game' to close the game.");
-                    break;
+                    inADecDiagonal++;
                 }
-            
-            }
-            else 
-            {
-                // reset inADiagonal
-                inADiagonal = 0;
+                else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
+                {
+                    inADecDiagonal++;
+                    if (inADecDiagonal == 4)
+                    {
+                        isWin = true; 
+                        JOptionPane.showMessageDialog(self, " DECREASING DIAGONAL WINNER IS PLAYER " + playerNum + "!\nClick 'Start Game' to play again or 'Exit Game' to close the game.");
+                        break;
+                    }
+                
+                }
+                else 
+                {
+                    // reset inADiagonal
+                    inADecDiagonal = 0;
+                }
             }
         }
-
 
         return isWin;
     }
