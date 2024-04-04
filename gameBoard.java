@@ -284,6 +284,7 @@ public class gameBoard extends JFrame implements ActionListener
 
             if (whoseTurn == 1)
             {
+                playerMoveMade = true;
                 PlayerTurnMessage.setText("Player 2 (CPU) Goes First- YELLOW");
 
                 //CPU goes first
@@ -477,7 +478,7 @@ public class gameBoard extends JFrame implements ActionListener
             }
             playerMoveMade = false;
         }
-        else if (source.equals("quitGame"))
+        else if (source.equals("Quit Game"))
         {
             // allow the user to exit the game
             System.exit(0); 
@@ -508,18 +509,30 @@ public class gameBoard extends JFrame implements ActionListener
                     // assign it to whose turn it is
                     // in this case, the column buttons are only for use of player 1 (the human player)
 
-                    // find the correct column array and set the button in the correct row to yellow
-                    
-
-                    columns[move[1]][r].setBackground(Color.YELLOW);
-
                     // set the occupied space to 2 to represent player 2's piece
                     occupiedSpacesN[move[1]][r] = 2;
 
+                    // find the correct column array and set the button in the correct row to yellow
+                    columns[move[1]][r].setBackground(Color.YELLOW);
+
+                    
+
+                    JOptionPane.showMessageDialog(self, "\n" +occupiedSpaces0[0]+ occupiedSpaces1[0]+occupiedSpaces2[0]+occupiedSpaces3[0]+occupiedSpaces4[0]+occupiedSpaces5[0]+occupiedSpaces6[0]
+                                    + "\n" + occupiedSpaces0[1]+ occupiedSpaces1[1]+occupiedSpaces2[1]+occupiedSpaces3[1]+occupiedSpaces4[1]+occupiedSpaces5[1]+occupiedSpaces6[1]
+                                    + "\n" + occupiedSpaces0[2]+ occupiedSpaces1[2]+occupiedSpaces2[2]+occupiedSpaces3[2]+occupiedSpaces4[2]+occupiedSpaces5[2]+occupiedSpaces6[2]
+                                    + "\n" + occupiedSpaces0[3]+ occupiedSpaces1[3]+occupiedSpaces2[3]+occupiedSpaces3[3]+occupiedSpaces4[3]+occupiedSpaces5[3]+occupiedSpaces6[3]
+                                    + "\n" + occupiedSpaces0[4]+ occupiedSpaces1[4]+occupiedSpaces2[4]+occupiedSpaces3[4]+occupiedSpaces4[4]+occupiedSpaces5[4]+occupiedSpaces6[4]
+                                    + "\n" + occupiedSpaces0[5]+ occupiedSpaces1[5]+occupiedSpaces2[5]+occupiedSpaces3[5]+occupiedSpaces4[5]+occupiedSpaces5[5]+occupiedSpaces6[5]
+                                    );
 
                     break;
                 }
+                else if (r == 0)
+                {
+                    move[1] = randCol.nextInt(7);
+                }
             }
+
             playerMoveMade = false;
             CPUTurnCounter++;
              
@@ -558,6 +571,13 @@ public class gameBoard extends JFrame implements ActionListener
                     columns[colNum][r].repaint();
                     //invokeAndWait();
                     playerMoveMade = true;
+                    JOptionPane.showMessageDialog(self, occupiedSpaces0[0]+ occupiedSpaces1[0]+occupiedSpaces2[0]+occupiedSpaces3[0]+occupiedSpaces4[0]+occupiedSpaces5[0]+occupiedSpaces6[0]
+                                    + "\n" + occupiedSpaces0[1]+ occupiedSpaces1[1]+occupiedSpaces2[1]+occupiedSpaces3[1]+occupiedSpaces4[1]+occupiedSpaces5[1]+occupiedSpaces6[1]
+                                    + "\n" + occupiedSpaces0[2]+ occupiedSpaces1[2]+occupiedSpaces2[2]+occupiedSpaces3[2]+occupiedSpaces4[2]+occupiedSpaces5[2]+occupiedSpaces6[2]
+                                    + "\n" + occupiedSpaces0[3]+ occupiedSpaces1[3]+occupiedSpaces2[3]+occupiedSpaces3[3]+occupiedSpaces4[3]+occupiedSpaces5[3]+occupiedSpaces6[3]
+                                    + "\n" + occupiedSpaces0[4]+ occupiedSpaces1[4]+occupiedSpaces2[4]+occupiedSpaces3[4]+occupiedSpaces4[4]+occupiedSpaces5[4]+occupiedSpaces6[4]
+                                    + "\n" + occupiedSpaces0[5]+ occupiedSpaces1[5]+occupiedSpaces2[5]+occupiedSpaces3[5]+occupiedSpaces4[5]+occupiedSpaces5[5]+occupiedSpaces6[5]
+                                    );
                     break;
                 }
                 if ( r == 0 && occupiedSpacesN[colNum][r] > 0)
