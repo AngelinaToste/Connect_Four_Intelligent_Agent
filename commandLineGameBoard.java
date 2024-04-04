@@ -306,6 +306,134 @@ public class commandLineGameBoard
         return isWin;
     }
 
+    int AlphaBetaSearch(int[][] occupiedSpacesN)
+    {
+        //FIXME finish code for this see txt p311
+        int player = toMove(state);
+
+        
+        return move;
+
+    }
+
+    int[] MAXValue(int [][] occupiedSpacesN)
+    {
+        int[] utilityMovePair = {0,0};
+        if (isWin(2, occupiedSpacesN))
+        {
+            return null;
+           // return UTILITY(), null 
+        }
+
+        // asssign v to negative infinity
+        int v = -Integer.MAX_VALUE, alpha, beta;
+        
+        // for each a in game.ACTIONS(state) do
+        int [][] actions = ACTIONS(occupiedSpacesN);
+        //int[] newMovePair = {0, 0};
+        int move;
+
+        for (int a; a < actions.length; a++)
+        {
+            // for each possible action, find the minimum value action pair using the min function
+            int[] minPair = MINValue(RESULT(occupiedSpacesN, a), alpha, beta);
+            int v2 = minPair[0], a2 = minPair[1];
+
+            // if the value is less than the current v value, assign the old value move pair the the new value move pair
+            if (v2 > v)
+            {
+                v = v2;
+                move = a;
+                alpha = Math.max(alpha, v);
+            }
+            if (v >= beta)
+            {
+                
+                utilityMovePair[0] = v;
+                utilityMovePair[1] = move;
+                return utilityMovePair;
+            }
+        }
+        utilityMovePair[0] = v;
+        utilityMovePair[1] = move;
+        return utilityMovePair;
+    }
+
+    int[] MINValue(int[][] occupiedSpacesN)
+    {
+        int[] utilityMovePair = {0,0};
+        if (isWin(2, occupiedSpacesN))
+        {
+           return null;
+        }
+        
+        // asssign v to infinity
+        int v = Integer.MAX_VALUE, alpha, beta;
+
+        int [] actions = ACTIONS(occupiedSpacesN);
+        int move;
+
+        for (int a; a < actions.length; a++)
+        {
+            // for each possible action, find the minimum value action pair using the min function
+            int[] maxPair = MaxValue(RESULT(occupiedSpacesN, a), alpha, beta);
+            int v2 = maxPair[0], a2 = maxPair[1];
+
+            // if the value is less than the current v value, assign the old value move pair the the new value move pair
+            if (v2 < v)
+            {
+                v = v2;
+                move = a;
+                beta = Math.min(beta, v);
+            }
+            if (v <= alpha)
+            {
+                
+                utilityMovePair[0] = v;
+                utilityMovePair[1] = move;
+                return utilityMovePair;
+            }
+        }
+        utilityMovePair[0] = v;
+        utilityMovePair[1] = move;
+        return utilityMovePair;
+    }
+
+    int[] ACTIONS(int[][] occupiedSpacesN)
+    {
+        int[] availableActions = {};
+        int actionCounter = 0;
+        // returns a list of the possible actions during a given state, these will be listed as available column numbers
+
+        // choose an available row from the specified column
+        for (int c = 0; c < 7; c++) // check each column that has an available spot
+        {
+            for ( int r = 5; r >= 0; r--)
+            {
+                if (occupiedSpacesN[c][r] == 0)
+                { 
+                    availableActions[actionCounter] = c;
+                    actionCounter++;
+                    break;
+                }
+                else if (r == 0)
+                {
+                    r = 5;
+                }
+            }
+        }
+        return availableActions;
+
+    }
+
+    int[][] RESULT(int[][] occupiedSpacesN, int action)
+    {
+        // take the given action and place it in the given array
+        //TODO understand what this function needs to do/how it is intended to be used
+
+        return occupiedSpacesN;
+    }
+
     public static void main(String[] args)
     {
         //int userTurnCounter = 0, CPUTurnCounter = 0;
