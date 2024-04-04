@@ -2,15 +2,21 @@ import java.util.*;
 
 //import javax.swing.JOptionPane;
 
+//1import javax.swing.JOptionPane;
+
+//import javax.swing.JOptionPane;
+
 //import javax.swing.JButton;
 //import javax.swing.JLabel;
 ////import javax.swing.JOptionPane;
 
 //import javafx.scene.paint.Color;
 
-public class commandLineGameBoard {
+public class commandLineGameBoard 
+{
 
     boolean playerMoveMade;
+    int userTurnCounter = 0, CPUTurnCounter = 0;
 
     
     commandLineGameBoard()
@@ -21,7 +27,7 @@ public class commandLineGameBoard {
     
     void startGame(int[][] occupiedSpacesN)
     {
-        int userTurnCounter = 0, CPUTurnCounter = 0;
+        
         
         playerMoveMade = false;
         System.out.println("Starting a Connect Four Game");
@@ -29,7 +35,7 @@ public class commandLineGameBoard {
         //print the board
         displayBoard(occupiedSpacesN);
 
-        while (userTurnCounter + CPUTurnCounter < 42)
+        while ((userTurnCounter + CPUTurnCounter) < 42)
         {
             // ask the user to choose a value
             System.out.println("Player 1 (YOU) Chooses a Column, 0-6");
@@ -37,12 +43,12 @@ public class commandLineGameBoard {
 
             int columnChoice = keyboard.nextInt();
 
-            playerMove(columnChoice, occupiedSpacesN, playerMoveMade, userTurnCounter);
+            userTurnCounter = playerMove(columnChoice, occupiedSpacesN, playerMoveMade, userTurnCounter);
             displayBoard(occupiedSpacesN);
             playerMoveMade = true;
 
             System.out.println("Player 2 (CPU) Chooses a Column");
-            CPUTurn(occupiedSpacesN, CPUTurnCounter);
+            CPUTurnCounter = CPUTurn(occupiedSpacesN, CPUTurnCounter);
             displayBoard(occupiedSpacesN);
             
 
@@ -52,7 +58,7 @@ public class commandLineGameBoard {
 
     }
 
-    public void CPUTurn( int[][] occupiedSpacesN, int CPUTurnCounter)
+    public int CPUTurn( int[][] occupiedSpacesN, int CPUTurnCounter)
     {
         if (playerMoveMade)
         {
@@ -78,8 +84,9 @@ public class commandLineGameBoard {
                 }
                 else if (r == 0)
                 {
-                    System.out.println("Choosing a new column1");
+                    System.out.println("Choosing a new column!");
                     move[1] = randCol.nextInt(7);
+                    r = 5;
                 }
             }
 
@@ -92,7 +99,8 @@ public class commandLineGameBoard {
                 System.exit(0);
                 //clearBoard(occupiedSpacesN, columns);
             }
-        }     
+        }   
+        return CPUTurnCounter;  
     }
     public void displayBoard(int[][] occupiedSpacesN)
     {
@@ -111,7 +119,7 @@ public class commandLineGameBoard {
         System.out.println();
     }
 
-    public void playerMove(int colNum, int[][] occupiedSpacesN, boolean playerMoveMade, int userTurnCounter)
+    public int playerMove(int colNum, int[][] occupiedSpacesN, boolean playerMoveMade, int userTurnCounter)
     {
         if (!playerMoveMade)
         {
@@ -131,6 +139,7 @@ public class commandLineGameBoard {
                 if ( r == 0 && occupiedSpacesN[colNum][r] > 0)
                 {
                     System.out.println("This column is full. Please choose another.");
+                    r = 5;
                 }
     
             }
@@ -145,6 +154,8 @@ public class commandLineGameBoard {
                 //clearBoard(occupiedSpacesN);
                 //playerMoveMade =  false;
         }
+
+        return userTurnCounter;
             
     }
 
@@ -158,7 +169,6 @@ public class commandLineGameBoard {
         // return  boolean true if a win exists
         Boolean isWin = false;
 
-        //FIXME? is there an issue with column checking or are threads causing it to trigger too early?
         /*------------------------------CHECK IF WIN IS IN A COLUMN----------------------------------------------------- */
         int inACol = 0; // counter to determine how many of the same tile are consecutive in a column ex r0c0 r1c0 c2c0 r3c0
         // check for connect 4 in each column
@@ -178,6 +188,7 @@ public class commandLineGameBoard {
                     if (inACol == 4)
                     {
                         isWin = true;
+                        displayBoard(occupiedSpacesN);
                         System.out.println("COLUMN WINNER IS PLAYER " + playerNum + " wining move: row " + r + " column" + c);
                         
                         return isWin;
@@ -189,6 +200,106 @@ public class commandLineGameBoard {
                 {
                     // reset inACol
                     inACol = 0;
+                }
+            }
+        }
+
+        /*------------------------------CHECK IF WIN IS IN A ROW----------------------------------------------------- */
+        int inARow = 0;
+        for(int r = 5; r >= 0; r--) // for number of rows in a column (0-5)
+        {
+            for (int c = 0; c < 7; c++) // for number of columns (0-6)
+            {
+                if ( inARow == 0 && occupiedSpacesN[c][r] == playerNum)
+                {
+                    inARow++;
+                }
+                else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
+                {
+                    inARow++;
+                    if (inARow == 4)
+                    {
+                        isWin = true; 
+                        displayBoard(occupiedSpacesN);
+                        System.out.println("ROW WINNER IS PLAYER " + playerNum + " wining move: row " + r + " column" + c);
+                        break;
+
+                    }
+                
+                }
+                else 
+                {
+                    // reset inARow
+                    inARow = 0;
+                }
+            }
+        }
+        
+        /*------------------------------CHECK IF WIN IS IN AN INCREASING DIAGONAL----------------------------------------------------- */
+        int inAnIncDiagonal = 0;
+        // all possible increasing diagonal starting positions
+        int allPossibleIncDiag[][] = {{3, 0},{4, 0},{5, 0},{5, 1},{5, 2},{5, 3}};
+
+        for (int i = 0; i < allPossibleIncDiag.length; i++)
+        {
+
+            for (int c = allPossibleIncDiag[i][1], r = allPossibleIncDiag[i][0]; c < 7 && r >= 0; c++, r--) // c for number of columns (0-6) and r for number of rows in a column (0-5)
+            {
+                if ( inAnIncDiagonal == 0 && occupiedSpacesN[c][r] == playerNum)
+                {
+                    inAnIncDiagonal++;
+                }
+                else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
+                {
+                    inAnIncDiagonal++;
+                    if (inAnIncDiagonal == 4)
+                    {
+                        isWin = true; 
+                        displayBoard(occupiedSpacesN);
+                        System.out.println("INCREASING DIAGONAL WINNER IS PLAYER "  + playerNum + " wining move: row " + r + " column" + c);
+                        break;
+                    }
+                
+                }
+                else 
+                {
+                    // reset inADiagonal
+                    inAnIncDiagonal = 0;
+                }
+            }
+        }
+
+        /*------------------------------CHECK IF WIN IS IN A DECREASING DIAGONAL----------------------------------------------------- */
+
+        // all possible decreasing diagonal starting positions
+        int allPossibleDecDiag[][] = {{0, 0},{0, 1},{0, 2},{0, 3},{1, 0},{2, 0}};
+        int inADecDiagonal = 0;
+
+        for (int i = 0; i < allPossibleDecDiag.length; i++)
+        {
+
+            for (int c = allPossibleDecDiag[i][1], r = allPossibleDecDiag[i][0]; c < 7 && r < 6; c++, r++) // c for number of columns (0-6) and r for number of rows in a column (0-5)
+            {
+                if ( inADecDiagonal == 0 && occupiedSpacesN[c][r] == playerNum)
+                {
+                    inADecDiagonal++;
+                }
+                else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
+                {
+                    inADecDiagonal++;
+                    if (inADecDiagonal == 4)
+                    {
+                        isWin = true; 
+                        displayBoard(occupiedSpacesN);
+                        System.out.println("DECREASING DIAGONAL WINNER IS PLAYER "  + playerNum + " wining move: row " + r + " column" + c);
+                        break;
+                    }
+                
+                }
+                else 
+                {
+                    // reset inADiagonal
+                    inADecDiagonal = 0;
                 }
             }
         }
