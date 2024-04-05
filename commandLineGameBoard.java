@@ -62,32 +62,38 @@ public class commandLineGameBoard
     {
         if (playerMoveMade)
         {
-            int[] move = new int[2]; // format is {row, column}
+
+            int move = AlphaBetaSearch(occupiedSpacesN);
+
+           
+            //int[] move = new int[2]; // format is {row, column}
 
             // choose a random column
-            Random randCol = new Random();
-            move[1] = randCol.nextInt(7);
+            //Random randCol = new Random();
+            //move[1] = randCol.nextInt(7);
            
             // choose an available row from the specified column
             for ( int r = 5; r >= 0; r--)
             {
-                if (occupiedSpacesN[move[1]][r] == 0)
+                if (occupiedSpacesN[move][r] == 0)
                 { // if the lowest row in the column is empty
                     // assign it to whose turn it is
                     // in this case, the column buttons are only for use of player 1 (the human player)
 
                     // set the occupied space to 2 to represent player 2's piece
-                    occupiedSpacesN[move[1]][r] = 2;
+                    occupiedSpacesN[move][r] = 2;
 
 
                     break;
                 }
+                /* there should already be checking in place to find all possible actions. dont need to check if something is possible, we know
                 else if (r == 0)
                 {
                     System.out.println("Choosing a new column!");
                     move[1] = randCol.nextInt(7);
                     r = 5;
                 }
+                */
             }
 
             playerMoveMade = false;
@@ -99,7 +105,9 @@ public class commandLineGameBoard
                 System.exit(0);
                 //clearBoard(occupiedSpacesN, columns);
             }
+            
         }   
+          
         return CPUTurnCounter;  
     }
     public void displayBoard(int[][] occupiedSpacesN)
@@ -306,93 +314,112 @@ public class commandLineGameBoard
         return isWin;
     }
 
-    int AlphaBetaSearch(int[][] occupiedSpacesN)
-    {
-        //FIXME finish code for this see txt p311
-        int player = toMove(state);
+    /* --------------------------------------------------THE ALGORITHM------------------------------------------------------------------- */
+    // current issues:
+    // results needs to be fixed so that the array is a copy and does not make reference to the original
+    // alpha beta search needs to return something!
+    // need to comme up with a way to evaluate the results
 
+    
+    int AlphaBetaSearch(int[][] state)
+    {
+        int[] utilityMovePair = {0,0}; //(value, move)
+
+        //int player = playerNum;
+
+        utilityMovePair = MAXValue(state, Integer.MIN_VALUE, Integer.MAX_VALUE);
         
-        return move;
+        return utilityMovePair[1]; // return move
 
     }
 
-    int[] MAXValue(int [][] occupiedSpacesN)
+    int[] MAXValue(int [][] state, int alpha, int beta)
     {
         int[] utilityMovePair = {0,0};
-        if (isWin(2, occupiedSpacesN))
+        if ( (CPUTurnCounter >= 4) && isWin(2, state))
         {
             return null;
            // return UTILITY(), null 
         }
 
         // asssign v to negative infinity
-        int v = -Integer.MAX_VALUE, alpha, beta;
+        int v = Integer.MIN_VALUE, move = 0;
         
         // for each a in game.ACTIONS(state) do
-        int [][] actions = ACTIONS(occupiedSpacesN);
-        //int[] newMovePair = {0, 0};
-        int move;
+        int [] actions = ACTIONS(state);
 
-        for (int a; a < actions.length; a++)
+        for (int a = 0; a < actions.length; a++)
         {
             // for each possible action, find the minimum value action pair using the min function
-            int[] minPair = MINValue(RESULT(occupiedSpacesN, a), alpha, beta);
-            int v2 = minPair[0], a2 = minPair[1];
+            int[] minPair = MINValue(RESULT(state, actions[a]), alpha, beta);
+            int v2 = minPair[0];
+            //a2 = minPair[1]; // double check if this is needed
 
             // if the value is less than the current v value, assign the old value move pair the the new value move pair
-            if (v2 > v)
+            if (actions[a] < 7)
             {
-                v = v2;
-                move = a;
-                alpha = Math.max(alpha, v);
-            }
-            if (v >= beta)
-            {
+                if (v2 > v)
+                {
+                    v = v2;
+                    move = actions[a];
+                    alpha = Math.max(alpha, v);
+                }
+                if (v >= beta)
+                {
                 
-                utilityMovePair[0] = v;
-                utilityMovePair[1] = move;
-                return utilityMovePair;
+                    utilityMovePair[0] = v;
+                    utilityMovePair[1] = move;
+                    return utilityMovePair;
+                }
+
             }
+            
         }
         utilityMovePair[0] = v;
         utilityMovePair[1] = move;
         return utilityMovePair;
     }
 
-    int[] MINValue(int[][] occupiedSpacesN)
+    int[] MINValue(int[][] state, int alpha, int beta)
     {
         int[] utilityMovePair = {0,0};
-        if (isWin(2, occupiedSpacesN))
+        if ((CPUTurnCounter >= 4) && isWin(2, state))
         {
            return null;
         }
         
         // asssign v to infinity
-        int v = Integer.MAX_VALUE, alpha, beta;
+        int v = Integer.MAX_VALUE;
 
-        int [] actions = ACTIONS(occupiedSpacesN);
-        int move;
+        // actions is the array of possible columns to move to
+        int [] actions = ACTIONS(state);
+        int move = 0;
 
-        for (int a; a < actions.length; a++)
+        for (int a = 0; a < actions.length; a++)
         {
             // for each possible action, find the minimum value action pair using the min function
-            int[] maxPair = MaxValue(RESULT(occupiedSpacesN, a), alpha, beta);
-            int v2 = maxPair[0], a2 = maxPair[1];
+            int[] maxPair = MAXValue(RESULT(state, actions[a]), alpha, beta);
+            int v2 = maxPair[0];
+            //a2 = maxPair[1]; is this needed
 
             // if the value is less than the current v value, assign the old value move pair the the new value move pair
-            if (v2 < v)
+            if (actions[a] < 7)
             {
-                v = v2;
-                move = a;
-                beta = Math.min(beta, v);
-            }
-            if (v <= alpha)
-            {
+                if (v2 < v)
+                {
+                    v = v2;
+                    move = actions[a];
+                    beta = Math.min(beta, v);
+                }
+                if (v <= alpha)
+                {
                 
-                utilityMovePair[0] = v;
-                utilityMovePair[1] = move;
-                return utilityMovePair;
-            }
+                    utilityMovePair[0] = v;
+                    utilityMovePair[1] = move;
+                    return utilityMovePair;
+                }
+
+            }  
         }
         utilityMovePair[0] = v;
         utilityMovePair[1] = move;
@@ -401,7 +428,7 @@ public class commandLineGameBoard
 
     int[] ACTIONS(int[][] occupiedSpacesN)
     {
-        int[] availableActions = {};
+        int[] availableActions = {7, 7, 7, 7, 7, 7, 7}; // 7 will act as a sentinel since it is an int but not a valid column number
         int actionCounter = 0;
         // returns a list of the possible actions during a given state, these will be listed as available column numbers
 
@@ -426,12 +453,38 @@ public class commandLineGameBoard
 
     }
 
-    int[][] RESULT(int[][] occupiedSpacesN, int action)
+    int[][] RESULT(int[][] state, int action)
     {
         // take the given action and place it in the given array
-        //TODO understand what this function needs to do/how it is intended to be used
 
-        return occupiedSpacesN;
+        // defines the state resulting from taing action a in state s
+    
+        // make a copy of the state called the result state so it can be modified to see the effect of a particular move in the current state
+        int[][] resultState = new int[7][6];
+
+        for (int c = 0; c < 7; c++)
+        {
+            int[] stateColumn = state[c];
+            System.arraycopy(stateColumn, 0, resultState[c], 0, 6);
+        }
+
+        for ( int r = 5; r >= 0; r--)
+        {
+            if (resultState[action][r] == 0)
+            { // if the lowest row in the column is empty
+                // assign it to whose turn it is
+                // in this case, the column buttons are only for use of player 1 (the human player)
+
+                // set the occupied space to 2 to represent player 2's piece
+                resultState[action][r] = 2;
+                break;
+            }
+        }
+
+        //playerMoveMade = false;
+        //CPUTurnCounter++;
+
+        return resultState;
     }
 
     public static void main(String[] args)
