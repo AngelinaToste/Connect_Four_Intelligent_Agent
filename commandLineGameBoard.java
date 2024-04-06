@@ -320,6 +320,22 @@ public class commandLineGameBoard
     // alpha beta search needs to return something!
     // need to comme up with a way to evaluate the results
 
+
+ /*
+function minimax (node, depth, maximizingPlayer)
+- if a node is the starting node or it is a winning move then return the heuristic value of the move along with the move itself
+
+- if the player is the maximizing player
+	--set value = -infinity
+	--for each possible action resulting from the node
+		---value = max(value, minimax(child (action) , depth − 1, FALSE)) // find the min value for the child node and compare it to the value set, choose the larger value
+		--- return the value (return the pair of the evaluation and the value)
+- else if the player is the minimizing player
+	-- set the value =  infinity
+	-- for each possible action resulting from the node
+		--- value = min(value, minimax(child (action), depth − 1, TRUE)) // find the min value from the child/ action node and compare it to the value that was assigned initially, choose the smaller number
+		--- return the value (the pair of evaluation and the value of the action)
+*/
     
     int AlphaBetaSearch(int[][] state)
     {
