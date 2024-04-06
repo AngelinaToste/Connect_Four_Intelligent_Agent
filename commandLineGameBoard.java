@@ -17,6 +17,8 @@ public class commandLineGameBoard
 
     boolean playerMoveMade;
     int userTurnCounter = 0, CPUTurnCounter = 0;
+    int userPoints = 100, CPUPoints = -100;
+    //private static final int MAX_VALUE = 100
 
     
     commandLineGameBoard()
@@ -167,7 +169,7 @@ public class commandLineGameBoard
             
     }
 
-    public Boolean isWin(int playerNum, int[][] occupiedSpacesN)
+    public Boolean isWin(int playerNum, int[][] occupiedSpacesN) 
     {
         //int tilesPlayed,
         // purpose: check if there are more than 4 tiles played by each player, check for col row and diag rows of 4
@@ -314,6 +316,165 @@ public class commandLineGameBoard
         return isWin;
     }
 
+    // TODO also account for when there is no win, return a heuristic state for the curent board
+    public int heuristicScore(int[][] state, int playerNum)
+    {
+        // point system
+        // 2 point for block 2 in a row
+        // 3 point for block 3 in a row
+        // 2 point for 2 in a row
+        // 3 points for 3 in a row
+
+        Boolean isWin = false;
+
+        /*------------------------------CHECK IF WIN IS IN A COLUMN----------------------------------------------------- */
+        int inACol = 0; // counter to determine how many of the same tile are consecutive in a column ex r0c0 r1c0 c2c0 r3c0
+        // check for connect 4 in each column
+
+        for(int c = 0; c < 7; c++) // for number of columns (0-6)
+        {
+            for (int r = 5; r >= 0; r--) // for number of rows in a column (0-5)
+            { // starts from bottom of col to top because all of the pieces go to the lowest possible place in a column
+                // potentially slightly more effecient, start with area with most tiles (bottom) first
+                if ( inACol == 0 && state[c][r] == playerNum) 
+                {
+                    inACol++;
+                }
+                else if ( inACol < 4 && state[c][r] == playerNum)
+                {
+                    inACol++;
+                    if (inACol == 4)
+                    {
+                        isWin = true;
+                        displayBoard(state);
+                        //System.out.println("COLUMN WINNER IS PLAYER " + playerNum + " wining move: row " + r + " column" + c);
+                        
+                        if ( playerNum == 1) {return 100;} // max value
+                        else if ( playerNum == 2) {return -100;} // max value
+                        break;
+
+                    }
+                
+                }
+                else 
+                {
+                    if (inACol == 2)
+                    {}
+                    // reset inACol
+                    inACol = 0;
+                }
+            }
+        }
+
+        /*------------------------------CHECK IF WIN IS IN A ROW----------------------------------------------------- */
+        int inARow = 0;
+        for(int r = 5; r >= 0; r--) // for number of rows in a column (0-5)
+        {
+            for (int c = 0; c < 7; c++) // for number of columns (0-6)
+            {
+                if ( inARow == 0 && state[c][r] == playerNum)
+                {
+                    inARow++;
+                }
+                else if ( inARow < 4 && state[c][r] == playerNum)
+                {
+                    inARow++;
+                    if (inARow == 4)
+                    {
+                        isWin = true; 
+                        //displayBoard(state);
+                        if ( playerNum == 1) {return 100;} // max value
+                        else if ( playerNum == 2) {return -100;} // max value
+                        break;
+
+                    }
+                
+                }
+                else 
+                {
+                    // reset inARow
+                    inARow = 0;
+                }
+            }
+        }
+        
+        /*------------------------------CHECK IF WIN IS IN AN INCREASING DIAGONAL----------------------------------------------------- */
+        int inAnIncDiagonal = 0;
+        // all possible increasing diagonal starting positions
+        int allPossibleIncDiag[][] = {{3, 0},{4, 0},{5, 0},{5, 1},{5, 2},{5, 3}};
+
+        for (int i = 0; i < allPossibleIncDiag.length; i++)
+        {
+
+            for (int c = allPossibleIncDiag[i][1], r = allPossibleIncDiag[i][0]; c < 7 && r >= 0; c++, r--) // c for number of columns (0-6) and r for number of rows in a column (0-5)
+            {
+                if ( inAnIncDiagonal == 0 && state[c][r] == playerNum)
+                {
+                    inAnIncDiagonal++;
+                }
+                else if ( inARow < 4 && state[c][r] == playerNum)
+                {
+                    inAnIncDiagonal++;
+                    if (inAnIncDiagonal == 4)
+                    {
+                        isWin = true; 
+                        //displayBoard(state);
+                        if ( playerNum == 1) {return 100;} // max value
+                        else if ( playerNum == 2) {return -100;} // max value
+                        break;
+                    }
+                
+                }
+                else 
+                {
+                    // reset inADiagonal
+                    inAnIncDiagonal = 0;
+                }
+            }
+        }
+
+        /*------------------------------CHECK IF WIN IS IN A DECREASING DIAGONAL----------------------------------------------------- */
+
+        // all possible decreasing diagonal starting positions
+        int allPossibleDecDiag[][] = {{0, 0},{0, 1},{0, 2},{0, 3},{1, 0},{2, 0}};
+        int inADecDiagonal = 0;
+
+        for (int i = 0; i < allPossibleDecDiag.length; i++)
+        {
+
+            for (int c = allPossibleDecDiag[i][1], r = allPossibleDecDiag[i][0]; c < 7 && r < 6; c++, r++) // c for number of columns (0-6) and r for number of rows in a column (0-5)
+            {
+                if ( inADecDiagonal == 0 && state[c][r] == playerNum)
+                {
+                    inADecDiagonal++;
+                }
+                else if ( inARow < 4 && state[c][r] == playerNum)
+                {
+                    inADecDiagonal++;
+                    if (inADecDiagonal == 4)
+                    {
+                        isWin = true; 
+                        //displayBoard(state);
+                        if ( playerNum == 1) {return 100;} // max value
+                        else if ( playerNum == 2) {return -100;} // max value
+                        break;
+                    }
+                
+                }
+                else 
+                {
+                    // reset inADiagonal
+                    inADecDiagonal = 0;
+                }
+            }
+        }
+        return isWin;
+
+
+    }
+
+
+
     /* --------------------------------------------------THE ALGORITHM------------------------------------------------------------------- */
     // current issues:
     // results needs to be fixed so that the array is a copy and does not make reference to the original
@@ -324,6 +485,7 @@ public class commandLineGameBoard
  /*
 function minimax (node, depth, maximizingPlayer)
 - if a node is the starting node or it is a winning move then return the heuristic value of the move along with the move itself
+*-else if depth == x return 
 
 - if the player is the maximizing player
 	--set value = -infinity
@@ -336,9 +498,77 @@ function minimax (node, depth, maximizingPlayer)
 		--- value = min(value, minimax(child (action), depth − 1, TRUE)) // find the min value from the child/ action node and compare it to the value that was assigned initially, choose the smaller number
 		--- return the value (the pair of evaluation and the value of the action)
 */
-    
+/* 
+    int[] minimax (int[][] state, int depth, Boolean maximizingPlayer)
+    {
+        int value;
+        int [] bestPair = {7,7};
 
-    
+        if ( depth == 0 || isWin(state))
+        {
+            //then return the heuristic value of the move along with the move itself
+            return moveValue();
+        }
+        // else if depth is a certain value, then return the best value
+
+        if (maximizingPlayer)
+        {
+            value = Integer.MIN_VALUE;
+            
+            // for each action or child of the current state/ node
+            // for each a in game.ACTIONS(state) do
+            int [] actions = ACTIONS(state);
+
+            for (int a = 0; a < actions.length; a++)
+            {
+                if (actions[a] < 7) // if the value is an acceptable action / column number
+                {
+                    //make a copy of the state and implement the action
+                    int [][] actionResultState = new int[state.length][];
+                    for(int i = 0; i < state.length; i++)
+                    {
+                        actionResultState[i] = state[i].clone();  
+                    }
+                    int value2[] = minimax(actionResultState, depth - 1, false);
+                    
+                    value = Math.max(value, value2[0]);
+
+                    bestPair[0] = value;
+                    bestPair[1] = action[];
+                    return bestPair;
+                }
+
+            }
+        }
+        else
+        {
+            value = Integer.MAX_VALUE;
+            int [] actions = ACTIONS(state);
+            for (int a = 0; a < actions.length; a++)
+            {
+                if (actions[a] < 7) // if the value is an acceptable action / column number
+                {
+                    //make a copy of the state and implement the action
+                    int [][] actionResultState = new int[state.length][];
+                    for(int i = 0; i < state.length; i++)
+                    {
+                        actionResultState[i] = state[i].clone();  
+                    }
+                    int value2[] = minimax(actionResultState, depth - 1, false);
+                    
+                    value = Math.max(value, value2[0]);
+
+                    bestPair[0] = value;
+                    bestPair[1] = action;
+                    return bestPair;
+                }
+
+            }
+        }
+    }
+*/
+
+/* 
     int AlphaBetaSearch(int[][] state)
     {
         int[] utilityMovePair = {0,0}; //(value, move)
@@ -504,7 +734,8 @@ function minimax (node, depth, maximizingPlayer)
 
         return resultState;
     }
-
+*/ 
+    }
     public static void main(String[] args)
     {
         //int userTurnCounter = 0, CPUTurnCounter = 0;
