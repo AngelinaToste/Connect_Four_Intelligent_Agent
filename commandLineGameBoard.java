@@ -11,7 +11,7 @@ public class commandLineGameBoard
     boolean playerMoveMade;
     int userTurnCounter = 0, CPUTurnCounter = 0;
     int userPoints = 100, CPUPoints = -100;
-    int[] lastMove = {0, 0};
+    int[] lastMove = {7, 7};
     //private static final int MAX_VALUE = 100
 
     
@@ -63,6 +63,8 @@ public class commandLineGameBoard
             int[] utilityMovePair = AlphaBeta(occupiedSpacesN, depth, MIN_VALUE, MAX_VALUE, false, lastMove);
 
             int move = utilityMovePair[1];
+
+            System.out.println(utilityMovePair[0]+" "+ utilityMovePair[1]);
 
             //int[] move = new int[2]; // format is {row, column}
 
@@ -318,6 +320,7 @@ public class commandLineGameBoard
 
     private static int heuristicScore(int[][] state, int[] lastMove, boolean isMaximizingPlayer)
     {
+        //System.out.println("heuristic start");
         // point system
         // 2 point for block 2 in a row
         // 3 point for block 3 in a row
@@ -613,27 +616,30 @@ public class commandLineGameBoard
             }
         
         }
-
+        //System.out.println("heuristic end");
         return score;
 
     }
 
     /* --------------------------------------------------THE ALGORITHM------------------------------------------------------------------- */
 
+    //issues with the return values of this function. how is the score being used ?
     int[] AlphaBeta(int[][] state, int depth, int alpha, int beta, boolean isMaximizingPlayer, int[] lastMove)
     {
-        int[] utilityMovePair = {0,0}; //(value, move)
-        int score = heuristicScore(state, lastMove, isMaximizingPlayer);  
+        //System.out.println("algo start");
+        int[] utilityMovePair = new int[2]; //(value, move) //FIXME doing nothing with this
+        int score = heuristicScore(state, lastMove, isMaximizingPlayer);  //FIXME doing nothing with this
+        utilityMovePair[0] = score;
 
         if (depth == 0 || score == MAX_VALUE || score == MIN_VALUE)  
         {return utilityMovePair; } //? need to return an int array
-        else if (depth == 40) 
+        else if (depth == 30) 
         {return utilityMovePair; }//? need to return an int array
 
         if (isMaximizingPlayer) 
         {  
             int maxScore = MIN_VALUE;  
-            int[] maxScoreMove = {0, 0};
+            int[] maxScoreMove = new int[2]; //FIXME doing nothing with this
 
             // for each a in game.ACTIONS(state) do
             int [] actions = ACTIONS(state);
@@ -655,24 +661,26 @@ public class commandLineGameBoard
                     }
                     //set maxScore to the max of maxscore vs the next depth for the min player
                     int[] minScoreMove = AlphaBeta(state, depth - 1, alpha, beta, false, lastMove);
-                    maxScore = Math.max(maxScore, minScoreMove[0]);  
+                    maxScore = Math.max(maxScore, minScoreMove[0]);
+                    maxScoreMove[0] = maxScore;  
                     // set alpha to the maximum of alpha vs the maxScore
                     alpha = Math.max(alpha, maxScore);
 
                     //reset the changed value to 0
                     state[actions[a]][rowValue] = 0;
+                    maxScoreMove[1] = actions[a];
                     if (beta <= alpha) {break;}
                 }
 
             }
-
+            //System.out.println("algo end");
             return maxScoreMove;  
         }
 
         else 
         {  
             int minScore = MAX_VALUE;  
-            int[] minScoreMove = {0, 0};
+            int[] minScoreMove = new int[2]; // FIXME doing nothing with this
 
             // for each a in game.ACTIONS(state) do
             int [] actions = ACTIONS(state);
@@ -695,23 +703,25 @@ public class commandLineGameBoard
                     //set minScore to the min of minscore vs the next depth for the max player
                     int[] maxScoreMove = AlphaBeta(state, depth - 1, alpha, beta, true, lastMove);
                     minScore = Math.min(minScore, maxScoreMove[0]);  
+                    minScoreMove[0] = minScore; 
                     // set beta to the minimum of alpha vs the minScore
                     beta = Math.min(beta, minScore);
 
                     //reset the changed value to 0
                     state[actions[a]][rowValue] = 0;
+                    minScoreMove[1] = actions[a];
                     if (beta <= alpha) {break;}
                 }
 
             }
-
+            //System.out.println("algo end");
             return minScoreMove;  
         }  
     } 
 
-
     int[] ACTIONS(int[][] occupiedSpacesN)
-    {
+    { 
+        //System.out.println("Actions");
         int[] availableActions = {7, 7, 7, 7, 7, 7, 7}; // 7 will act as a sentinel since it is an int but not a valid column number
         int actionCounter = 0;
         // returns a list of the possible actions during a given state, these will be listed as available column numbers
@@ -727,12 +737,18 @@ public class commandLineGameBoard
                     actionCounter++;
                     break;
                 }
-                else if (r == 0)
-                {
-                    r = 5;
-                }
+                //else if (r == 0)
+                //{
+                  //  r = 5;
+                //}
             }
         }
+        //System.out.println("Actions end");
+        //for (int x = 0; x < availableActions.length; x++)
+        //{
+            //System.out.print(availableActions[x]);
+        //}
+        //System.out.println();
         return availableActions;
 
     }
