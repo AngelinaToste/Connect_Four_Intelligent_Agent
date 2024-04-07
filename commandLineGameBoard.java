@@ -101,7 +101,7 @@ public class commandLineGameBoard
             playerMoveMade = false;
             CPUTurnCounter++;
              
-            if  (CPUTurnCounter > 3 && isWin(2, occupiedSpacesN))
+            if  (CPUTurnCounter > 3 && isWin(false, occupiedSpacesN, lastMove))
             {
                 System.out.println("done");
                 System.exit(0);
@@ -159,7 +159,7 @@ public class commandLineGameBoard
 
         userTurnCounter++;
              
-        if  ( userTurnCounter > 3 && isWin( 1, occupiedSpacesN))
+        if  ( userTurnCounter > 3 && isWin( true, occupiedSpacesN, lastMove))
         {
             System.out.println("done");
             System.exit(0);
@@ -171,8 +171,10 @@ public class commandLineGameBoard
             
     }
 
-    public Boolean isWin(int playerNum, int[][] occupiedSpacesN) 
+    public Boolean isWin(boolean isMaximizingPlayer, int[][] state, int[] lastMove) 
     {
+        
+        
         //int tilesPlayed,
         // purpose: check if there are more than 4 tiles played by each player, check for col row and diag rows of 4
         // parameters 
@@ -181,140 +183,302 @@ public class commandLineGameBoard
         // return  boolean true if a win exists
         Boolean isWin = false;
 
-        /*------------------------------CHECK IF WIN IS IN A COLUMN----------------------------------------------------- */
-        int inACol = 0; // counter to determine how many of the same tile are consecutive in a column ex r0c0 r1c0 c2c0 r3c0
-        // check for connect 4 in each column
+        int score = 0, playerNum, inACol = 0, inARow = 0, inADecDiagonal = 0, inAnIncDiagonal = 0;
 
-        for(int c = 0; c < 7; c++) // for number of columns (0-6)
+        if (isMaximizingPlayer){playerNum = 1;}
+        else {playerNum = 2;}
+
+        // check the COLUMN that the lastMove is in, reward points accordingly
+        for (int r = 5; r >= 0; r--)
         {
-            for (int r = 5; r >= 0; r--) // for number of rows in a column (0-5)
-            { // starts from bottom of col to top because all of the pieces go to the lowest possible place in a column
-                // potentially slightly more effecient, start with area with most tiles (bottom) first
-                if ( inACol == 0 && occupiedSpacesN[c][r] == playerNum) 
+            if (state[lastMove[1]][r] == 0)
+            {// don't look through a column if the lowest index is a 0
+                // reset inACol
+                inACol = 0;
+                break;
+            } 
+            else if ( inACol == 0 && state[lastMove[1]][r] == playerNum) 
+            {
+                inACol++;
+            }
+            else if ( inACol < 4 && state[lastMove[1]][r] == playerNum)
+            {
+                inACol++;
+                if (inACol == 4)
                 {
-                    inACol++;
+                    isWin = true;
+                    displayBoard(state);
+                    System.out.println("COLUMN WINNER IS PLAYER " + playerNum + " wining move: row " + r + " column" + lastMove[1]);
+                    if ( playerNum == 1) {return isWin;} // max value
+                    else if ( playerNum == 2) {return isWin;} // max value
+                    break;
                 }
-                else if ( inACol < 4 && occupiedSpacesN[c][r] == playerNum)
+            
+            }
+            else 
+            {
+                if (playerNum == 1)
                 {
-                    inACol++;
-                    if (inACol == 4)
+                    switch(inACol)
                     {
-                        isWin = true;
-                        displayBoard(occupiedSpacesN);
-                        System.out.println("COLUMN WINNER IS PLAYER " + playerNum + " wining move: row " + r + " column" + c);
-                        
-                        return isWin;
-
-                    }
-                
+                        case 2: 
+                            //score = score + 20;
+                            break;
+                        case 3:
+                            //score = score + 30;
+                            break;
+                    } 
                 }
-                else 
+                else
                 {
-                    // reset inACol
-                    inACol = 0;
+                    switch(inACol)
+                    {
+                        case 2: 
+                            //score = score - 20;
+                            break;
+                        case 3:
+                            //score = score - 30;
+                            break;
+                    } 
                 }
+                
+                
+                // reset inACol
+                inACol = 0;
             }
         }
 
-        /*------------------------------CHECK IF WIN IS IN A ROW----------------------------------------------------- */
-        int inARow = 0;
-        for(int r = 5; r >= 0; r--) // for number of rows in a column (0-5)
+        // check the ROW that the lastMove is in, reward points accordingly
+        for (int c = 0; c < 7; c++)
         {
-            for (int c = 0; c < 7; c++) // for number of columns (0-6)
-            {
-                if ( inARow == 0 && occupiedSpacesN[c][r] == playerNum)
-                {
-                    inARow++;
-                }
-                else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
-                {
-                    inARow++;
-                    if (inARow == 4)
-                    {
-                        isWin = true; 
-                        displayBoard(occupiedSpacesN);
-                        System.out.println("ROW WINNER IS PLAYER " + playerNum + " wining move: row " + r + " column" + c);
-                        break;
 
-                    }
-                
-                }
-                else 
+            if ( inARow == 0 && state[c][lastMove[0]] == playerNum) 
+            {
+                inARow++;
+            }
+            else if ( inARow < 4 && state[c][lastMove[0]] == playerNum)
+            {
+                inARow++;
+                if (inARow == 4)
                 {
-                    // reset inARow
-                    inARow = 0;
+                    isWin = true;
+                    displayBoard(state);
+                    System.out.println("ROW WINNER IS PLAYER " + playerNum + " wining move: row " + lastMove[0] + " column" + c);
+                    if ( playerNum == 1) {return isWin;} // max value
+                    else if ( playerNum == 2) {return isWin;} // max value
+                    break;
                 }
+            
+            }
+            else 
+            {
+                if (playerNum == 1)
+                {
+                    switch(inARow)
+                    {
+                        case 2: 
+                            //score = score + 20;
+                            break;
+                        case 3:
+                            //score = score + 30;
+                            break;
+                    } 
+                }
+                else
+                {
+                    switch(inARow)
+                    {
+                        case 2: 
+                            //score = score - 20;
+                            break;
+                        case 3:
+                            //score = score - 30;
+                            break;
+                    } 
+                }
+                
+                
+                // reset inACol
+                inARow = 0;
             }
         }
         
-        /*------------------------------CHECK IF WIN IS IN AN INCREASING DIAGONAL----------------------------------------------------- */
-        int inAnIncDiagonal = 0;
-        // all possible increasing diagonal starting positions
-        int allPossibleIncDiag[][] = {{3, 0},{4, 0},{5, 0},{5, 1},{5, 2},{5, 3}};
+        
+        // check the DECREASING DIAGONAL that the lastMove is in, reward points accordingly
 
-        for (int i = 0; i < allPossibleIncDiag.length; i++)
+        int[] startingPosition = new int[2];
+
+        int row = lastMove[0], col = lastMove[1], dif = row-col;
+
+        
+        switch(dif)
         {
+            case 0:
+                startingPosition[0] = 0;
+                startingPosition[1] = 0;
+                break;
+            case 1:
+                startingPosition[0] = 1;
+                startingPosition[1] = 0;
+                break;
+            case -1:
+                startingPosition[0] = 0;
+                startingPosition[1] = 1;
+                break;
+            case 2:
+                startingPosition[0] = 2;
+                startingPosition[1] = 0;
+                break;
+            case -2:
+                startingPosition[0] = 0;
+                startingPosition[1] = 2;
+                break;
+            case -3:
+                startingPosition[0] = 0;
+                startingPosition[1] = 3;
+                break;
+        }
 
-            for (int c = allPossibleIncDiag[i][1], r = allPossibleIncDiag[i][0]; c < 7 && r >= 0; c++, r--) // c for number of columns (0-6) and r for number of rows in a column (0-5)
+        for (int c = startingPosition[1], r = startingPosition[0]; c < 7 && r < 6; c++, r++) // c for number of columns (0-6) and r for number of rows in a column (0-5)
+        {
+            if ( inADecDiagonal == 0 && state[c][r] == playerNum)
             {
-                if ( inAnIncDiagonal == 0 && occupiedSpacesN[c][r] == playerNum)
+                inADecDiagonal++;
+            }
+            else if ( inARow < 4 && state[c][r] == playerNum)
+            {
+                inADecDiagonal++;
+                if (inADecDiagonal == 4)
                 {
-                    inAnIncDiagonal++;
+                    isWin = true; 
+                    displayBoard(state);
+                    System.out.println("DECREASING DIAGONAL WINNER IS PLAYER "  + playerNum + " wining move: row " + r + " column" + c);
+                    if ( playerNum == 1) {return isWin;} // max value
+                    else if ( playerNum == 2) {return isWin;} // max value
+                    break;
                 }
-                else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
+            
+            }
+            else 
+            {
+                if (playerNum == 1)
                 {
-                    inAnIncDiagonal++;
-                    if (inAnIncDiagonal == 4)
+                    switch(inADecDiagonal)
                     {
-                        isWin = true; 
-                        displayBoard(occupiedSpacesN);
-                        System.out.println("INCREASING DIAGONAL WINNER IS PLAYER "  + playerNum + " wining move: row " + r + " column" + c);
-                        break;
-                    }
-                
+                        case 2: 
+                            //score = score + 20;
+                            break;
+                        case 3:
+                            //score = score + 30;
+                            break;
+                    } 
                 }
-                else 
+                else
                 {
-                    // reset inADiagonal
-                    inAnIncDiagonal = 0;
+                    switch(inADecDiagonal)
+                    {
+                        case 2: 
+                            //score = score - 20;
+                            break;
+                        case 3:
+                            //score = score - 30;
+                            break;
+                    } 
                 }
+
+                // reset inADiagonal
+                inADecDiagonal = 0;
             }
         }
 
-        /*------------------------------CHECK IF WIN IS IN A DECREASING DIAGONAL----------------------------------------------------- */
+        // check the INCREASING DIAGONAL that the lastMove is in, reward points accordingly
 
-        // all possible decreasing diagonal starting positions
-        int allPossibleDecDiag[][] = {{0, 0},{0, 1},{0, 2},{0, 3},{1, 0},{2, 0}};
-        int inADecDiagonal = 0;
+        int[] startingPosition2 = new int[2];
 
-        for (int i = 0; i < allPossibleDecDiag.length; i++)
+        int row2 = lastMove[0], col2 = lastMove[1], sum = row2 + col2;
+
+        
+        switch(sum)
         {
+            case 3:
+                startingPosition2[0] = 3;
+                startingPosition2[1] = 0;
+                break;
+            case 4:
+                startingPosition2[0] = 4;
+                startingPosition2[1] = 0;
+                break;
+            case 5:
+                startingPosition2[0] = 5;
+                startingPosition2[1] = 0;
+                break;
+            case 6:
+                startingPosition2[0] = 5;
+                startingPosition2[1] = 1;
+                break;
+            case 7:
+                startingPosition2[0] = 5;
+                startingPosition2[1] = 2;
+                break;
+            case 8:
+                startingPosition2[0] = 5;
+                startingPosition2[1] = 3;
+                break;
 
-            for (int c = allPossibleDecDiag[i][1], r = allPossibleDecDiag[i][0]; c < 7 && r < 6; c++, r++) // c for number of columns (0-6) and r for number of rows in a column (0-5)
-            {
-                if ( inADecDiagonal == 0 && occupiedSpacesN[c][r] == playerNum)
-                {
-                    inADecDiagonal++;
-                }
-                else if ( inARow < 4 && occupiedSpacesN[c][r] == playerNum)
-                {
-                    inADecDiagonal++;
-                    if (inADecDiagonal == 4)
-                    {
-                        isWin = true; 
-                        displayBoard(occupiedSpacesN);
-                        System.out.println("DECREASING DIAGONAL WINNER IS PLAYER "  + playerNum + " wining move: row " + r + " column" + c);
-                        break;
-                    }
-                
-                }
-                else 
-                {
-                    // reset inADiagonal
-                    inADecDiagonal = 0;
-                }
-            }
         }
+
+        for (int c = startingPosition2[1], r = startingPosition2[0]; c < 7 && r >= 0; c++, r--) // c for number of columns (0-6) and r for number of rows in a column (0-5)
+        {
+            if ( inAnIncDiagonal == 0 && state[c][r] == playerNum)
+            {
+                inAnIncDiagonal++;
+            }
+            else if ( inARow < 4 && state[c][r] == playerNum)
+            {
+                inAnIncDiagonal++;
+                if (inAnIncDiagonal == 4)
+                {
+                    isWin = true; 
+                    displayBoard(state);
+                    System.out.println("INCREASING DIAGONAL WINNER IS PLAYER "  + playerNum + " wining move: row " + r + " column" + c);
+                    if ( playerNum == 1) {return isWin;} // max value
+                    else if ( playerNum == 2) {return isWin;} // max value
+                    break;
+                }
+            
+            }
+            else 
+            {
+                if (playerNum == 1)
+                {
+                    switch(inAnIncDiagonal)
+                    {
+                        case 2: 
+                            score = score + 20;
+                            break;
+                        case 3:
+                            score = score + 30;
+                            break;
+                    } 
+                }
+                else
+                {
+                    switch(inAnIncDiagonal)
+                    {
+                        case 2: 
+                            score = score - 20;
+                            break;
+                        case 3:
+                            score = score - 30;
+                            break;
+                    } 
+                }
+                // reset inADiagonal
+                inAnIncDiagonal = 0;
+            }
+        
+        }
+
         return isWin;
     }
 
@@ -629,7 +793,7 @@ public class commandLineGameBoard
         //System.out.println("algo start");
         int[] utilityMovePair = new int[2]; //(value, move) //FIXME doing nothing with this
         int score = heuristicScore(state, lastMove, isMaximizingPlayer);  //FIXME doing nothing with this
-        utilityMovePair[0] = score;
+        utilityMovePair[0] = score; // added
 
         if (depth == 0 || score == MAX_VALUE || score == MIN_VALUE)  
         {return utilityMovePair; } //? need to return an int array
@@ -662,13 +826,13 @@ public class commandLineGameBoard
                     //set maxScore to the max of maxscore vs the next depth for the min player
                     int[] minScoreMove = AlphaBeta(state, depth - 1, alpha, beta, false, lastMove);
                     maxScore = Math.max(maxScore, minScoreMove[0]);
-                    maxScoreMove[0] = maxScore;  
+                    maxScoreMove[0] = maxScore;  //added
                     // set alpha to the maximum of alpha vs the maxScore
                     alpha = Math.max(alpha, maxScore);
 
                     //reset the changed value to 0
                     state[actions[a]][rowValue] = 0;
-                    maxScoreMove[1] = actions[a];
+                    maxScoreMove[1] = actions[a];//added
                     if (beta <= alpha) {break;}
                 }
 
@@ -703,13 +867,13 @@ public class commandLineGameBoard
                     //set minScore to the min of minscore vs the next depth for the max player
                     int[] maxScoreMove = AlphaBeta(state, depth - 1, alpha, beta, true, lastMove);
                     minScore = Math.min(minScore, maxScoreMove[0]);  
-                    minScoreMove[0] = minScore; 
+                    minScoreMove[0] = minScore; //added
                     // set beta to the minimum of alpha vs the minScore
                     beta = Math.min(beta, minScore);
 
                     //reset the changed value to 0
                     state[actions[a]][rowValue] = 0;
-                    minScoreMove[1] = actions[a];
+                    minScoreMove[1] = actions[a]; //added
                     if (beta <= alpha) {break;}
                 }
 
