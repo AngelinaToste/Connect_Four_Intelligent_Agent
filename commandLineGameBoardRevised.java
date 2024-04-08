@@ -78,6 +78,7 @@ public class commandLineGameBoardRevised
 
                         // set the occupied space to 2 to represent player 2's piece
                         occupiedSpacesN[move[1]][r] = 2;
+                        System.out.println("row "+ move[0] + " col " + move[1]);
                         lastMove[0] = r;
                         lastMove[1] = move[1];
                         CPULastMove[0] = r;
@@ -94,12 +95,13 @@ public class commandLineGameBoardRevised
 
                 int[] move = nextMove(occupiedSpacesN, depth, MIN_VALUE, MAX_VALUE, false);
 
-                occupiedSpacesN[move[0]][move[1]] = 2;
+                occupiedSpacesN[move[1]][move[0]] = 2;
                 lastMove[0] = move[0];
                 lastMove[1] = move[1];
                 CPULastMove[0] = move[0];
                 CPULastMove[1] = move[1];
 
+                System.out.println("row "+ move[0] + " col " + move[1]);
                 playerMoveMade = false;
             
                 CPUTurnCounter ++;
@@ -119,7 +121,7 @@ public class commandLineGameBoardRevised
         
         
         // collection of possible columns to choose
-        int [] actions = ACTIONS(state);
+        int [] actions = ACTIONS(state, CPULastMove);
         int[] address = new int[3];
         //int[][] possibleAddress = new int[actions.length][3]; //will contain the row and column of the best square to select
         //int addressCapacity = 0;
@@ -135,14 +137,15 @@ public class commandLineGameBoardRevised
                 {
                         if (state[actions[a]][r] == 0)
                         {
+                            //int score = AlphaBeta(state, depth, alpha, beta, isMaxixingPlayer, lastMove);
                             int score = AlphaBeta(state, depth, alpha, beta, isMaxixingPlayer, lastMove); //call the minimax on each empty score for the opponent, who is minimizing
                             state[actions[a]][r] = 1;
 
                             if(score > bestScore)
                             {
                                 bestScore = score;
-                                address[0] = actions[a];
-                                address[1] = r;
+                                address[0] = r;
+                                address[1] = actions[a];
                                 address[2] =  score; // row, column, score
                                 //possibleAddress[addressCapacity][2] =  score; // row, column, score
                                 //possibleAddress[addressCapacity][0] = actions[a];
@@ -209,6 +212,7 @@ public class commandLineGameBoardRevised
                     lastMove[0] = r;
                     lastMove[1] = colNum;
                     //invokeAndWait();
+
                     playerMoveMade = true;
                     break;
                 }
@@ -856,18 +860,26 @@ public class commandLineGameBoardRevised
     int AlphaBeta(int[][] state, int depth, int alpha, int beta, boolean isMaximizingPlayer, int[] lastMove)
     {
         
-        int score = heuristicScore(state, lastMove, isMaximizingPlayer);
+        int score = 0;
+        if (isMaximizingPlayer)
+        {
+            score= heuristicScore(state, lastMove, isMaximizingPlayer);
+        }
+        else
+        {
+            score= heuristicScore(state, CPULastMove, isMaximizingPlayer);
+        }
 
         if (depth == 0 || score == MAX_VALUE || score == MIN_VALUE)  
         {return score; }
-        else if (depth == 38) 
+        else if (depth == 37) 
         {return score; }
         if (isMaximizingPlayer) 
         {  
             int maxScore = MIN_VALUE;  
 
             // for each a in game.ACTIONS(state) do
-            int [] actions = ACTIONS(state);
+            int [] actions = ACTIONS(state, lastMove);
 
             for (int a = 0; a < actions.length; a++)
             {
@@ -901,7 +913,7 @@ public class commandLineGameBoardRevised
             int minScore = MAX_VALUE;  
 
             // for each a in game.ACTIONS(state) do
-            int [] actions = ACTIONS(state);
+            int [] actions = ACTIONS(state, CPULastMove);
 
             for (int a = 0; a < actions.length; a++)
             {
@@ -932,7 +944,7 @@ public class commandLineGameBoardRevised
         }  
     } 
 
-    int[] ACTIONS(int[][] occupiedSpacesN)
+    int[] ACTIONS(int[][] occupiedSpacesN, int[] lastMove)
     { 
         //System.out.println("Actions");
         int[] availableActions = {7, 7, 7, 7, 7, 7, 7}; // 7 will act as a sentinel since it is an int but not a valid column number
@@ -953,6 +965,54 @@ public class commandLineGameBoardRevised
 
             }
         }
+
+        // attempt to reorder the actions array to prioritize moves at or close to the column that the last move was in
+        int temp, x = 0, y = 1, z = 2, openSpaces = 0;
+
+        // if there is no more room in the column-- set the x, y, z to different values, (prioritize y and z)
+        for ( int r = 5; r >= 0; r--)
+        {
+            if (occupiedSpacesN[lastMove[1]][r] == 0)
+            {
+                openSpaces++;
+            }
+
+        }
+
+        if (openSpaces < 4)
+        {
+            // we are telling the agent to avoid putting pieces in the same column when there is no room in it to win
+            // basically saying give up
+            x = availableActions.length-1;
+            y = 0;
+            z = 1;
+        }
+
+        for (int a = 0; a < availableActions.length; a++)
+        {
+            if (availableActions[a] == (lastMove[1] - 1))
+            {
+                // swap the current action with the one in the second position in the array
+                temp = availableActions[y];
+                availableActions[y] = availableActions[a];
+                availableActions[a] = temp;
+            }
+            else if (availableActions[a] == lastMove[1])
+            {
+                // swap the current action with the one in the first position in the array
+                temp = availableActions[x];
+                availableActions[x] = availableActions[a];
+                availableActions[a] = temp;
+            }
+            else if (availableActions[a] == (lastMove[1] + 1))
+            {
+                // swap the current action with the one in the second position in the array
+                temp = availableActions[z];
+                availableActions[z] = availableActions[a];
+                availableActions[a] = temp;
+            }
+        }
+
         return availableActions;
 
     }
