@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class commandLineGameBoard 
+public class commandLineGameBoardRevised 
 {
 
     private static final int ROWSIZE = 6;
@@ -15,7 +15,7 @@ public class commandLineGameBoard
     //private static final int MAX_VALUE = 100
 
     
-    commandLineGameBoard()
+    commandLineGameBoardRevised()
     {
         
     }
@@ -58,67 +58,24 @@ public class commandLineGameBoard
     {
         if (playerMoveMade)
         {
-            /*
             int depth = ROWSIZE * COLSIZE;
 
-            int[] utilityMovePair = AlphaBeta(occupiedSpacesN, depth, MIN_VALUE, MAX_VALUE, false, lastMove);
+            int[] move = nextMove(occupiedSpacesN, depth, MIN_VALUE, MAX_VALUE, false);
 
-            int move = utilityMovePair[1];
-
-            System.out.println(utilityMovePair[0]+" "+ utilityMovePair[1]);
-
-            //int[] move = new int[2]; // format is {row, column}
-
-            // choose a random column
-            //Random randCol = new Random();
-            //move[1] = randCol.nextInt(7);
-           
-            // choose an available row from the specified column
-            for ( int r = 5; r >= 0; r--)
-            {
-                if (occupiedSpacesN[move][r] == 0)
-                { // if the lowest row in the column is empty
-                    // assign it to whose turn it is
-                    // in this case, the column buttons are only for use of player 1 (the human player)
-
-                    // set the occupied space to 2 to represent player 2's piece
-                    occupiedSpacesN[move][r] = 2;
-                    lastMove[0] = r;
-                    lastMove[1] = move;
-
-
-                    break;
-                }
-                /* there should already be checking in place to find all possible actions. dont need to check if something is possible, we know
-                else if (r == 0)
-                {
-                    System.out.println("Choosing a new column!");
-                    move[1] = randCol.nextInt(7);
-                    r = 5;
-                }
-                
-            }
-
-            playerMoveMade = false;
-            CPUTurnCounter++;
-             
-            if  (CPUTurnCounter > 3 && isWin(false, occupiedSpacesN, lastMove))
-            {
-                System.out.println("done");
-                System.exit(0);
-                //clearBoard(occupiedSpacesN, columns);
-            }
-            */
+            occupiedSpacesN[move[1]][move[0]] = 2;
+            
+            CPUTurnCounter ++;
+            
             
         }   
           
         return CPUTurnCounter;  
     }
-    public int[] nextMove() // returns an integer array of row, col, and the best move
+    public int[] nextMove(int[][] state, int depth, int alpha, int beta, boolean isMaxixingPlayer) // returns an integer array of row, col, and the score
     {
         // use this to return an array for the move 
-        int bestScore = -Infinity; //unreachably low score to maximize against
-        int[] address; //will contain the row and column of the best square to select
+        int bestScore = MIN_VALUE; //unreachably low score to maximize against
+        int[] address = new int[3]; //will contain the row and column of the best square to select
         //iterate over the available columns to place a tile
         
         // for each a in game.ACTIONS(state) do
@@ -128,19 +85,21 @@ public class commandLineGameBoard
         {
             if (actions[a] < 7)
             {
-                int rowValue = 0;
+
                 //insert the playerNum into the specified column
                 for ( int r = 5; r >= 0; r--)
                 {
                         if (state[actions[a]][r] == 0)
                         {
-                            int score = AlphaBeta() //call the minimax on each empty score for the opponent, who is minimizing
+                            int score = AlphaBeta(state, depth, alpha, beta, isMaxixingPlayer, lastMove); //call the minimax on each empty score for the opponent, who is minimizing
                             state[actions[a]][r] = 1;
-                            rowValue = r;
+
                             if(score > bestScore)
                             {
                                 bestScore = score;
-                                address = {i, j, score} // row, column, score
+                                address[0] = actions[a];
+                                address[1] = r;
+                                address[2] =  score; // row, column, score
                             }
                             break;
                         }
@@ -829,20 +788,13 @@ public class commandLineGameBoard
     {
         // use the same best score algorithm for this section, do not use actions heuristicScore
         
-        
-        
-        
-        //System.out.println("algo start");
-        //int[] utilityMovePair = new int[2]; //(value, move) //FIXME doing nothing with this
-        int score = heuristicScore(state, lastMove, isMaximizingPlayer);  //FIXME doing nothing with this
-        int bestScore = 0;
-        //utilityMovePair[0] = score; // added
+        int score = heuristicScore(state, lastMove, isMaximizingPlayer);
+        //int bestScore = 0;
 
         if (depth == 0 || score == MAX_VALUE || score == MIN_VALUE)  
-        {return score; } // double check what value to return
+        {return score; }
         else if (depth == 30) 
-        {return score; }//? need to return an int array
-
+        {return score; }
         if (isMaximizingPlayer) 
         {  
             int maxScore = MIN_VALUE;  
@@ -854,16 +806,16 @@ public class commandLineGameBoard
             {
                 if (actions[a] < 7)
                 {
-                    int rowValue = 0;
+
                     //insert a 1 into the specified column
                     for ( int r = 5; r >= 0; r--)
                     {
                         if (state[actions[a]][r] == 0)
                         {
                             state[actions[a]][r] = 1;
-                            rowValue = r;
+
                             score = AlphaBeta(state, depth - 1, alpha, beta, false, lastMove);
-                            maxScore = Math.max(maxScore, score)
+                            maxScore = Math.max(maxScore, score);
                             alpha = Math.max(alpha, maxScore);
                             state[actions[a]][r] = 0; // reset the change made
                             
@@ -888,17 +840,16 @@ public class commandLineGameBoard
             {
                 if (actions[a] < 7)
                 {
-                    int rowValue = 0;
+
                     //insert a 2 into the specified column
                     for ( int r = 5; r >= 0; r--)
                     {
                         if (state[actions[a]][r] == 0)
                         {
                             state[actions[a]][r] = 2;
-                            rowValue = r;
                             
                             score = AlphaBeta(state, depth - 1, alpha, beta, true, lastMove);
-                            minScore = Math.min(minScore, score)
+                            minScore = Math.min(minScore, score);
                             beta = Math.min(beta, minScore);
                             state[actions[a]][r] = 0; // reset the change made
                             
@@ -961,7 +912,7 @@ public class commandLineGameBoard
 
         int[][] occupiedSpacesN = {occupiedSpaces0, occupiedSpaces1, occupiedSpaces2, occupiedSpaces3, occupiedSpaces4, occupiedSpaces5, occupiedSpaces6};
 
-        commandLineGameBoard Connect4 = new commandLineGameBoard();
+        commandLineGameBoardRevised Connect4 = new commandLineGameBoardRevised();
         Connect4.startGame(occupiedSpacesN);
     }
 
