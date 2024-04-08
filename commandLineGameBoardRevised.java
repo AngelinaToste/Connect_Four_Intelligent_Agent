@@ -12,6 +12,7 @@ public class commandLineGameBoardRevised
     int userTurnCounter = 0, CPUTurnCounter = 0;
     int userPoints = 100, CPUPoints = -100;
     int[] lastMove = {7, 7};
+    int[] CPULastMove = {7, 7};
     //private static final int MAX_VALUE = 100
 
     
@@ -58,13 +59,53 @@ public class commandLineGameBoardRevised
     {
         if (playerMoveMade)
         {
-            int depth = ROWSIZE * COLSIZE;
+            // make the cpus first move random 
+            if (CPUTurnCounter == 0)
+            {
+                int[] move = new int[2]; // format is {row, column}
 
-            int[] move = nextMove(occupiedSpacesN, depth, MIN_VALUE, MAX_VALUE, false);
+                // choose a random column
+                Random randCol = new Random();
+                move[1] = randCol.nextInt(7);
+           
+                // choose an available row from the specified column
+                for ( int r = 5; r >= 0; r--)
+                {
+                    if (occupiedSpacesN[move[1]][r] == 0)
+                    { // if the lowest row in the column is empty
+                        // assign it to whose turn it is
+                        // in this case, the column buttons are only for use of player 1 (the human player)
 
-            occupiedSpacesN[move[1]][move[0]] = 2;
+                        // set the occupied space to 2 to represent player 2's piece
+                        occupiedSpacesN[move[1]][r] = 2;
+                        lastMove[0] = r;
+                        lastMove[1] = move[1];
+                        CPULastMove[0] = r;
+                        CPULastMove[1] = move[1];
+                        playerMoveMade = false;
+                        CPUTurnCounter++;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                int depth = ROWSIZE * COLSIZE;
+
+                int[] move = nextMove(occupiedSpacesN, depth, MIN_VALUE, MAX_VALUE, false);
+
+                occupiedSpacesN[move[0]][move[1]] = 2;
+                lastMove[0] = move[0];
+                lastMove[1] = move[1];
+                CPULastMove[0] = move[0];
+                CPULastMove[1] = move[1];
+
+                playerMoveMade = false;
             
-            CPUTurnCounter ++;
+                CPUTurnCounter ++;
+
+            }
+            
             
             
         }   
@@ -75,11 +116,14 @@ public class commandLineGameBoardRevised
     {
         // use this to return an array for the move 
         int bestScore = MIN_VALUE; //unreachably low score to maximize against
-        int[] address = new int[3]; //will contain the row and column of the best square to select
-        //iterate over the available columns to place a tile
         
-        // for each a in game.ACTIONS(state) do
+        
+        // collection of possible columns to choose
         int [] actions = ACTIONS(state);
+        int[] address = new int[3];
+        //int[][] possibleAddress = new int[actions.length][3]; //will contain the row and column of the best square to select
+        //int addressCapacity = 0;
+        //iterate over the available columns to place a tile
 
         for (int a = 0; a < actions.length; a++)
         {
@@ -100,12 +144,36 @@ public class commandLineGameBoardRevised
                                 address[0] = actions[a];
                                 address[1] = r;
                                 address[2] =  score; // row, column, score
+                                //possibleAddress[addressCapacity][2] =  score; // row, column, score
+                                //possibleAddress[addressCapacity][0] = actions[a];
+                                //possibleAddress[addressCapacity][1] = r;
+                                //possibleAddress[addressCapacity][2] =  score; // row, column, score
+                                //addressCapacity++;
                             }
+                            //else
+                            //{
+                               // possibleAddress[addressCapacity][0] = 7;
+                               // possibleAddress[addressCapacity][1] = 7;
+                                //possibleAddress[addressCapacity][2] = 7; // row, column, score
+                                //addressCapacity++;
+                            //}
+                            state[actions[a]][r] = 0;
                             break;
                         }
                 }
             }
         }
+
+        // iterate through possible addresses and choose best scores choose randomly if all same
+        //int bestAddresses[][] = new int[actions.length][3];
+        //for (int y = 0; y < possibleAddress.length; y++)
+        //{
+
+        
+        //}
+
+        //int address = new int[3];
+
         return address;
     }
     public void displayBoard(int[][] occupiedSpacesN)
@@ -170,7 +238,6 @@ public class commandLineGameBoardRevised
     public Boolean isWin(boolean isMaximizingPlayer, int[][] state, int[] lastMove) 
     {
         
-        
         //int tilesPlayed,
         // purpose: check if there are more than 4 tiles played by each player, check for col row and diag rows of 4
         // parameters 
@@ -193,7 +260,7 @@ public class commandLineGameBoardRevised
                 inACol = 0;
                 break;
             } 
-            else if ( inACol == 0 && state[lastMove[1]][r] == playerNum) 
+            else if ( inACol == 0 && (state[lastMove[1]][r] == playerNum))
             {
                 inACol++;
             }
@@ -480,6 +547,7 @@ public class commandLineGameBoardRevised
 
     private static int heuristicScore(int[][] state, int[] lastMove, boolean isMaximizingPlayer)
     {
+        // FIXME why is it not affected by the inital placement of it's last move.
         //System.out.println("heuristic start");
         // point system
         // 2 point for block 2 in a row
@@ -782,18 +850,17 @@ public class commandLineGameBoardRevised
     }
 
     /* --------------------------------------------------THE ALGORITHM------------------------------------------------------------------- */
-
-    //issues with the return values of this function. how is the score being used ?
+    // still issues with predictability.
+    // add in some randomness, especially with CPU's first move, randomness can also be added in to determining the best move
+    // may help resolve any ties with multiple moves with the same best heuristic
     int AlphaBeta(int[][] state, int depth, int alpha, int beta, boolean isMaximizingPlayer, int[] lastMove)
     {
-        // use the same best score algorithm for this section, do not use actions heuristicScore
         
         int score = heuristicScore(state, lastMove, isMaximizingPlayer);
-        //int bestScore = 0;
 
         if (depth == 0 || score == MAX_VALUE || score == MIN_VALUE)  
         {return score; }
-        else if (depth == 30) 
+        else if (depth == 38) 
         {return score; }
         if (isMaximizingPlayer) 
         {  
@@ -883,18 +950,9 @@ public class commandLineGameBoardRevised
                     actionCounter++;
                     break;
                 }
-                //else if (r == 0)
-                //{
-                  //  r = 5;
-                //}
+
             }
         }
-        //System.out.println("Actions end");
-        //for (int x = 0; x < availableActions.length; x++)
-        //{
-            //System.out.print(availableActions[x]);
-        //}
-        //System.out.println();
         return availableActions;
 
     }
@@ -917,3 +975,4 @@ public class commandLineGameBoardRevised
     }
 
 }
+
