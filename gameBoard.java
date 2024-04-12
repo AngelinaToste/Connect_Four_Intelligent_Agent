@@ -501,8 +501,6 @@ public class gameBoard extends JFrame implements ActionListener
         }
     }
 
-
-    // make a function to determine the results of the CPU's turn
     public int CPUTurn( JButton columns[][], int[][] occupiedSpacesN, int CPUTurnCounter, int[] lastMove)
     {
         if (playerMoveMade)
@@ -1449,26 +1447,6 @@ public class gameBoard extends JFrame implements ActionListener
         }
 
         return availableActions;
-
-    }
-
-    public void clearBoard (int occupiedSpacesN[][], JButton columns[][]) // FIXME, CPU is still going, jlabel not changing
-    {
-        
-        for(int r = 5; r >= 0; r--) // for number of rows in a column (0-5)
-        {
-            for (int c = 0; c < 7; c++) // for number of columns (0-6)
-            {
-                // clear all of the values placed in occupied spaces
-                    // set the values in the row arrays to 0
-                occupiedSpacesN[c][r] = 0;
-
-                // clear all of the colors of the buttons in columns
-                columns[c][r].setBackground(null);
-                
-            }
-        }
-        isCleared = true;
 
     }
 
