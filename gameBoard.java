@@ -1395,8 +1395,11 @@ public class gameBoard extends JFrame implements ActionListener
         }
 
         // attempt to reorder the actions array to prioritize moves at or close to the column that the last move was in
-        int temp, x = 0, y = 1, z = 2, openSpaces = 0, blocked = 0;
+        int temp, x = 0, y = 1, z = 2; //openSpaces = 0, blocked = 0;
 
+        int[] openAndBlocked  = isBlocked (playerNum, lastMove[1]);
+
+        /* 
         // if there is no more room in the column-- set the x, y, z to different values, (prioritize y and z)
         for ( int r = 5; r >= 0; r--)
         {
@@ -1411,14 +1414,59 @@ public class gameBoard extends JFrame implements ActionListener
             }
 
         }
+        */
 
-        if ((openSpaces < 4) && (blocked > 0))
+        boolean leftBlocked = false, rightBlocked = false;
+        // check if the column of the last move is blocked, if it is, change the index values
+        if ((openAndBlocked[0] < 4) && (openAndBlocked[1] > 0))
         {
             // we are telling the agent to avoid putting pieces in the same column when there is no room in it to win (given they player is blocked)
             // basically saying give up
-            x = availableActions.length-1;
-            y = 0;
-            z = 1;
+            x = availableActions.length-1; //  move x to the end because there is no space in it.
+            y = 0; // move y to be chosen first
+            z = 1; // move z to be chosen second
+
+            // check if left column is blocked (if col is 0 look elsewhere or do not check?)
+            if (lastMove[1]-1 >= 0)
+            {
+                int[] openAndBlocked1  = isBlocked (playerNum, lastMove[1]-1);
+
+                if ((openAndBlocked1[0] < 4) && (openAndBlocked1[1] > 0))
+                {
+                    x = availableActions.length-1; //  move x to the end because there is no space in it.
+                    y = availableActions.length-2; // move y near the end with x since there is no space in it either
+                    z = 0; // move z to be chosen first
+
+                    //JOptionPane.showMessageDialog(self, "left block");
+                    leftBlocked = true;
+                }
+                
+            }
+
+            // check if right column is blocked (if col is 6 look elsewhere or do not check?)
+            if ((lastMove[1]+1 <= 6) && !leftBlocked)
+            {
+                int[] openAndBlocked2  = isBlocked (playerNum, lastMove[1]+1);
+
+                if ((openAndBlocked2[0] < 4) && (openAndBlocked2[1] > 0))
+                {
+                    x = availableActions.length-1; //  move x to the end because there is no space in it.
+                    y = 0; // move y to be chosen first
+                    z = availableActions.length-2; // move z to be near the end
+                    //JOptionPane.showMessageDialog(self, "right block");
+                    rightBlocked =  true;
+                }
+                
+            }
+
+            // check if both left and right column are blocked
+            if (leftBlocked && rightBlocked)
+            {
+                x = availableActions.length-1; //  move x to the end because there is no space in it.
+                y = availableActions.length-2; // move y to be chosen first
+                z = availableActions.length-3; // move z to be near the end
+            }
+
         }
 
         for (int a = 0; a < availableActions.length; a++)
@@ -1444,10 +1492,37 @@ public class gameBoard extends JFrame implements ActionListener
                 availableActions[z] = availableActions[a];
                 availableActions[a] = temp;
             }
+            
         }
 
+        //JOptionPane.showMessageDialog(self,availableActions[0]+" "+ availableActions[1]+" "+availableActions[2]+" "+availableActions[3]+" "+ availableActions[4] +" "+availableActions[5]+" "+ availableActions[6]);
         return availableActions;
 
+    }
+
+    int[] isBlocked (int playerNum, int column)
+    {
+        int openSpaces = 0, blocked = 0;
+        // if there is no more room in the column-- set the x, y, z to different values, (prioritize y and z)
+        for ( int r = 0; r < 6; r++)
+        {
+            if (occupiedSpacesN[column][r] == 0)
+            {
+                openSpaces++;
+                if ( r != 5 && (occupiedSpacesN[column][r+1] > 0) && (occupiedSpacesN[column][r+1]!= playerNum))
+                {
+                    blocked++;
+                    break;
+                }
+            }
+            
+
+        }
+
+        int[] openAndBlocked = {openSpaces, blocked};
+        //JOptionPane.showMessageDialog(self, openSpaces);
+        return openAndBlocked;
+        
     }
 
     public static void main (String[] args)
