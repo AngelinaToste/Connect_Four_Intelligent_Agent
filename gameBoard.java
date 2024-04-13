@@ -1397,28 +1397,16 @@ public class gameBoard extends JFrame implements ActionListener
         // attempt to reorder the actions array to prioritize moves at or close to the column that the last move was in
         int temp, x = 0, y = 1, z = 2; //openSpaces = 0, blocked = 0;
 
-        int[] openAndBlocked  = isBlocked (playerNum, lastMove[1]);
+        int[] localMoves = {lastMove[1], (lastMove[1]-1), (lastMove[1]+1)};  // moves to prioritize if they are available
 
-        /* 
-        // if there is no more room in the column-- set the x, y, z to different values, (prioritize y and z)
-        for ( int r = 5; r >= 0; r--)
-        {
-            if ((occupiedSpacesN[lastMove[1]][r] == 0) && (occupiedSpacesN[lastMove[1]][r+1] > 0) )
-            {
-                openSpaces++;
+        int[] openAndBlocked1  = isBlocked (playerNum, localMoves[0]),
+             openAndBlocked2  = isBlocked (playerNum, localMoves[1]), 
+             openAndBlocked3  = isBlocked (playerNum, localMoves[2]);
+        
+        // if one of them is open
 
-                if ( occupiedSpacesN[lastMove[1]][r+1]!= playerNum)
-                {
-                    blocked++;
-                }
-            }
-
-        }
-        */
-
-        boolean leftBlocked = false, rightBlocked = false;
         // check if the column of the last move is blocked, if it is, change the index values
-        if ((openAndBlocked[0] < 4) && (openAndBlocked[1] > 0))
+        if (openAndBlocked[0] < 4 && openAndBlocked[1] == 1)
         {
             // we are telling the agent to avoid putting pieces in the same column when there is no room in it to win (given they player is blocked)
             // basically saying give up
@@ -1469,6 +1457,8 @@ public class gameBoard extends JFrame implements ActionListener
 
         }
 
+        // orders the columns based on the ordering provided through checking for blocks.
+
         for (int a = 0; a < availableActions.length; a++)
         {
             if (availableActions[a] == (lastMove[1] - 1))
@@ -1509,11 +1499,11 @@ public class gameBoard extends JFrame implements ActionListener
             if (occupiedSpacesN[column][r] == 0)
             {
                 openSpaces++;
-                if ( r != 5 && (occupiedSpacesN[column][r+1] > 0) && (occupiedSpacesN[column][r+1]!= playerNum))
-                {
-                    blocked++;
-                    break;
-                }
+            }
+            else if (occupiedSpacesN[column][r]!= playerNum)
+            {
+               blocked++;
+               break;
             }
             
 
