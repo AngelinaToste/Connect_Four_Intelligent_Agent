@@ -599,7 +599,7 @@ public class gameBoard extends JFrame implements ActionListener
                             //int score = AlphaBeta(state, depth, alpha, beta, isMaxixingPlayer, lastMove);
                             int score = AlphaBeta(state, depth, alpha, beta, isMaximizingPlayer, lastMove); //call the minimax on each empty score for the opponent, who is minimizing
                          
-                            state[actions[a]][r] = 2;
+                            state[actions[a]][r] = 2; //FIXME
 
                             if(score < bestScore)
                             {
@@ -609,7 +609,7 @@ public class gameBoard extends JFrame implements ActionListener
                                 address[2] =  score; // row, column, score
                                
                             }
-                            state[actions[a]][r] = 0;
+                            state[actions[a]][r] = 0; //FIXME
                             break;
                         }
                 }
@@ -1316,12 +1316,12 @@ public class gameBoard extends JFrame implements ActionListener
                     {
                         if (state[actions[a]][r] == 0)
                         {
-                            state[actions[a]][r] = 1;
+                            state[actions[a]][r] = 1; //FIXME
 
                             score = AlphaBeta(state, depth - 1, alpha, beta, false, lastMove);
                             maxScore = Math.max(maxScore, score);
                             alpha = Math.max(alpha, maxScore);
-                            state[actions[a]][r] = 0; // reset the change made
+                            state[actions[a]][r] = 0; // reset the change made  //FIXME
                             
                             if (beta <= alpha){ break; }
                         }
@@ -1350,12 +1350,12 @@ public class gameBoard extends JFrame implements ActionListener
                     {
                         if (state[actions[a]][r] == 0)
                         {
-                            state[actions[a]][r] = 2;
+                            state[actions[a]][r] = 2; //FIXME
                             
                             score = AlphaBeta(state, depth - 1, alpha, beta, true, lastMove);
                             minScore = Math.min(minScore, score);
                             beta = Math.min(beta, minScore);
-                            state[actions[a]][r] = 0; // reset the change made
+                            state[actions[a]][r] = 0; // reset the change made //FIXME
                             
                             if (beta <= alpha){ break; }
                             break;
@@ -1399,63 +1399,42 @@ public class gameBoard extends JFrame implements ActionListener
 
         int[] localMoves = {lastMove[1], (lastMove[1]-1), (lastMove[1]+1)};  // moves to prioritize if they are available
 
-        int[] openAndBlocked1  = isBlocked (playerNum, localMoves[0]),
-             openAndBlocked2  = isBlocked (playerNum, localMoves[1]), 
-             openAndBlocked3  = isBlocked (playerNum, localMoves[2]);
-        
-        // if one of them is open
+        int[][] openAndBlocked  = {isBlocked (playerNum, localMoves[0]), isBlocked (playerNum, localMoves[1]), isBlocked (playerNum, localMoves[2])};
 
-        // check if the column of the last move is blocked, if it is, change the index values
-        if (openAndBlocked[0] < 4 && openAndBlocked[1] == 1)
+        int[] localMoveOrder = {7, 7, 7};
+
+
+        for (int t = 0; t < 3; t++)
         {
-            // we are telling the agent to avoid putting pieces in the same column when there is no room in it to win (given they player is blocked)
-            // basically saying give up
-            x = availableActions.length-1; //  move x to the end because there is no space in it.
-            y = 0; // move y to be chosen first
-            z = 1; // move z to be chosen second
-
-            // check if left column is blocked (if col is 0 look elsewhere or do not check?)
-            if (lastMove[1]-1 >= 0)
+            // if a move is blocked
+            if ((openAndBlocked[t][0] < 4) && (openAndBlocked[t][1] == 1))
             {
-                int[] openAndBlocked1  = isBlocked (playerNum, lastMove[1]-1);
-
-                if ((openAndBlocked1[0] < 4) && (openAndBlocked1[1] > 0))
-                {
-                    x = availableActions.length-1; //  move x to the end because there is no space in it.
-                    y = availableActions.length-2; // move y near the end with x since there is no space in it either
-                    z = 0; // move z to be chosen first
-
-                    //JOptionPane.showMessageDialog(self, "left block");
-                    leftBlocked = true;
-                }
-                
+                localMoveOrder[t] = availableActions.length-(t+1);
             }
-
-            // check if right column is blocked (if col is 6 look elsewhere or do not check?)
-            if ((lastMove[1]+1 <= 6) && !leftBlocked)
-            {
-                int[] openAndBlocked2  = isBlocked (playerNum, lastMove[1]+1);
-
-                if ((openAndBlocked2[0] < 4) && (openAndBlocked2[1] > 0))
-                {
-                    x = availableActions.length-1; //  move x to the end because there is no space in it.
-                    y = 0; // move y to be chosen first
-                    z = availableActions.length-2; // move z to be near the end
-                    //JOptionPane.showMessageDialog(self, "right block");
-                    rightBlocked =  true;
-                }
-                
-            }
-
-            // check if both left and right column are blocked
-            if (leftBlocked && rightBlocked)
-            {
-                x = availableActions.length-1; //  move x to the end because there is no space in it.
-                y = availableActions.length-2; // move y to be chosen first
-                z = availableActions.length-3; // move z to be near the end
-            }
-
+            
         }
+
+        for (int t = 0; t < 3; t++)
+        {
+            // if a move is blocked
+            if ((localMoveOrder[t] == 7) && (localMoveOrder[0] != 0) && (localMoveOrder[1] != 0) && (localMoveOrder[2] != 0))
+            {
+                localMoveOrder[t] = 0;
+            }
+            else if ((localMoveOrder[t] == 7) && (localMoveOrder[0] != 1) && (localMoveOrder[1] != 1) && (localMoveOrder[2] != 1))
+            {
+                localMoveOrder[t] = 1;
+            }
+            else if ((localMoveOrder[t] == 7) && (localMoveOrder[0] != 2) && (localMoveOrder[1] != 2) && (localMoveOrder[2] != 2))
+            {
+                localMoveOrder[t] = 1;
+            }
+            
+        }
+
+        x = localMoveOrder[0];
+        y = localMoveOrder[1];
+        z = localMoveOrder[2];
 
         // orders the columns based on the ordering provided through checking for blocks.
 
@@ -1500,7 +1479,7 @@ public class gameBoard extends JFrame implements ActionListener
             {
                 openSpaces++;
             }
-            else if (occupiedSpacesN[column][r]!= playerNum)
+            else if (occupiedSpacesN[column][r] != playerNum)
             {
                blocked++;
                break;
