@@ -1,3 +1,21 @@
+// Angelina Toste
+// Connect Four Intelligent Agent Command Line Game Board
+// this is a revised version of the game board 
+// with no errors, it uses the command line for input and output
+// the user will supply it with a column number and the game will exit once a win has occurred.
+
+/* CSCI 384- Project 1,  Angelina Toste 
+    purpose: create an intelligent game agent to play a two-agent game of Connect Four
+    Rules of the game: 
+        - game board: 6 rows x 7 columns
+        - tiles inserted from the top 7 columns only, they sink to the lowest position when placed on the board
+        - winner determined by having pieces in one of the goal positions horizontal, diagonal, or vertical (4 pieces)
+    Define a State:
+        - initial state is the empty board  Board[42] = {0,0,0....} 
+        - future states an array of the 42 spaces, 0 meaning no piece there, 1 meaning player 1's piece, and 2 meaning player 2's piece.
+        - goal positions (horizontal, vertical, increasing diagonal, decreasing diagonal)
+*/
+
 import java.util.*;
 
 public class commandLineGameBoardRevised 
@@ -536,8 +554,6 @@ public class commandLineGameBoardRevised
 
     private static int heuristicScore(int[][] state, int[] lastMove, boolean isMaximizingPlayer)
     {
-        // FIXME why is it not affected by the inital placement of it's last move.
-        //System.out.println("heuristic start");
         // point system
         // 2 point for block 2 in a row
         // 3 point for block 3 in a row
@@ -839,9 +855,6 @@ public class commandLineGameBoardRevised
     }
 
     /* --------------------------------------------------THE ALGORITHM------------------------------------------------------------------- */
-    // still issues with predictability.
-    // add in some randomness, especially with CPU's first move, randomness can also be added in to determining the best move
-    // may help resolve any ties with multiple moves with the same best heuristic
     int AlphaBeta(int[][] state, int depth, int alpha, int beta, boolean isMaximizingPlayer, int[] lastMove)
     {
         

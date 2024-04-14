@@ -7,43 +7,8 @@
     Define a State:
         - initial state is the empty board  Board[42] = {0,0,0....} 
         - future states an array of the 42 spaces, 0 meaning no piece there, 1 meaning player 1's piece, and 2 meaning player 2's piece.
-        - goal positions
-            mathematical way to determine it:
-                horizontal (in a single row): pos[i], pos[i+1], pos [i+2], pos[i+3]
-                vertical (in a single column): pos[i], pos[i+7], pos[i+14], pos[i+21]
-                diagonal: pos[i], pos[i+8], pos[i+16], pos[i+24]
-            
-         
-Functionality needed in the program
-- GUI interface for the Board
-- ability to click a column or column number to insert a new tile
-- function to insert tile: this function will check the column from the bottom up to find the first zero space and insert tile there
-- function for goal evaluation after a tile has been inserted
-- minimax algorithm for the computer to determine the next best available move also using alpha beta pruning
-    + additionally use heuristic function to determine the best choice based on defense or offense move
-
-            { 0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 0, 0, 0,
-            }
+        - goal positions (horizontal, vertical, increasing diagonal, decreasing diagonal)
 */
-
-/*
- * List of functionalities to achieve today:
- * X- make game board
- * X- make tiles
- * X- make button/ way of user putting tiles in the columns on the board
- * X- reflect the user's moves in the array
- * - use the intelligent agent to choose the next move 
- *      (there are always 7 possible options on each turn-- unless a column is completely full)
- * - win validation
- * - also include tie validation
- * 
- */
 
 import javax.swing.*;
 import java.util.*;
@@ -525,7 +490,7 @@ public class gameBoard extends JFrame implements ActionListener
                         // set the occupied space to 2 to represent player 2's piece
                         occupiedSpacesN[move[1]][r] = 2;
                         columns[move[1]][r].setBackground(Color.YELLOW);
-                        JOptionPane.showMessageDialog(self,"row "+ r + " col " + move[1]);
+                        
                         lastMove[0] = r;
                         lastMove[1] = move[1];
                         CPULastMove[0] = r;
@@ -552,7 +517,7 @@ public class gameBoard extends JFrame implements ActionListener
                 CPULastMove[0] = move[0];
                 CPULastMove[1] = move[1];
 
-                JOptionPane.showMessageDialog(self,"row "+ move[0] + " col " + move[1]);
+                
                 playerMoveMade = false;
             
                 CPUTurnCounter ++;
@@ -561,20 +526,17 @@ public class gameBoard extends JFrame implements ActionListener
             
             if  ( CPUTurnCounter > 3 && isWin( false, occupiedSpacesN, lastMove))
             {
-                JOptionPane.showMessageDialog(self,"done");
+                JOptionPane.showMessageDialog(self,"The game is finished.");
                 System.exit(0);
-
-                //TODO, also consider clearing the board?? although may not need to have a restart game option
             }
-            
             
         }   
           
         return CPUTurnCounter;  
     }
 
-    public int[] nextMove(int[][] state, int depth, int alpha, int beta, boolean isMaximizingPlayer) // returns an integer array of row, col, and the score
-    {
+    public int[] nextMove(int[][] state, int depth, int alpha, int beta, boolean isMaximizingPlayer) 
+    {  // returns an integer array of row, col, and the score
         // use this to return an array for the move 
         int bestScore = MAX_VALUE; //unreachably low score to maximize against
         
@@ -582,8 +544,7 @@ public class gameBoard extends JFrame implements ActionListener
         // collection of possible columns to choose
         int [] actions = ACTIONS(state, CPULastMove, isMaximizingPlayer);
         int[] address = {7, 7, 7};
-        //int[][] possibleAddress = new int[actions.length][3]; //will contain the row and column of the best square to select
-        //int addressCapacity = 0;
+
         //iterate over the available columns to place a tile
 
         for (int a = 0; a < actions.length; a++)
@@ -599,7 +560,7 @@ public class gameBoard extends JFrame implements ActionListener
                             //int score = AlphaBeta(state, depth, alpha, beta, isMaxixingPlayer, lastMove);
                             int score = AlphaBeta(state, depth, alpha, beta, isMaximizingPlayer, lastMove); //call the minimax on each empty score for the opponent, who is minimizing
                          
-                            state[actions[a]][r] = 2; //FIXME
+                            state[actions[a]][r] = 2;
 
                             if(score < bestScore)
                             {
@@ -609,7 +570,7 @@ public class gameBoard extends JFrame implements ActionListener
                                 address[2] =  score; // row, column, score
                                
                             }
-                            state[actions[a]][r] = 0; //FIXME
+                            state[actions[a]][r] = 0;
                             break;
                         }
                 }
@@ -624,12 +585,6 @@ public class gameBoard extends JFrame implements ActionListener
         if (!playerMoveMade)
         {
             //paint the lowest possible token in this column a specific color (depending on whose turn it is)
-            /*
-            * - find the lowest token
-            * - check the availability of other tokens in the column. 
-            *      > this can be done by either checking color or by storing the color values in an 1D array. such as {0,0,0,1,2,1}
-            *      > in the example above, 1 would mean the color for player 1 and 2 would mean the color for player 2
-            */
             // set the new tile color to red for the user
             tileColor = Color.RED;
 
@@ -662,7 +617,7 @@ public class gameBoard extends JFrame implements ActionListener
              
         if  ( userTurnCounter > 3 && isWin( true, occupiedSpacesN, lastMove))
         {
-            JOptionPane.showMessageDialog(self, "done");
+            JOptionPane.showMessageDialog(self, "The game is finished");
             System.exit(0);
         }
 
@@ -700,8 +655,8 @@ public class gameBoard extends JFrame implements ActionListener
                 if (inACol == 4)
                 {
                     isWin = true;
-                    //displayBoard(state);
-                    JOptionPane.showMessageDialog(self, "COLUMN WINNER IS PLAYER " + playerNum + " wining move: row " + r + " column" + lastMove[1]);
+                    
+                    JOptionPane.showMessageDialog(self, "COLUMN WINNER IS PLAYER " + playerNum );
                     if ( playerNum == 1) {return isWin;} // max value
                     else if ( playerNum == 2) {return isWin;} // max value
                     break;
@@ -715,10 +670,10 @@ public class gameBoard extends JFrame implements ActionListener
                     switch(inACol)
                     {
                         case 2: 
-                            //score = score + 20;
+                            
                             break;
                         case 3:
-                            //score = score + 30;
+                            
                             break;
                     } 
                 }
@@ -756,7 +711,7 @@ public class gameBoard extends JFrame implements ActionListener
                 {
                     isWin = true;
                     //displayBoard(state);
-                    JOptionPane.showMessageDialog(self, "ROW WINNER IS PLAYER " + playerNum + " wining move: row " + lastMove[0] + " column" + c);
+                    JOptionPane.showMessageDialog(self, "ROW WINNER IS PLAYER " + playerNum);
                     if ( playerNum == 1) {return isWin;} // max value
                     else if ( playerNum == 2) {return isWin;} // max value
                     break;
@@ -845,9 +800,9 @@ public class gameBoard extends JFrame implements ActionListener
                 {
                     isWin = true; 
                     //displayBoard(state);
-                    JOptionPane.showMessageDialog(self, "DECREASING DIAGONAL WINNER IS PLAYER "  + playerNum + " wining move: row " + r + " column" + c);
+                    JOptionPane.showMessageDialog(self, "DECREASING DIAGONAL WINNER IS PLAYER "  + playerNum );
                     if ( playerNum == 1) {return isWin;} // max value
-                    else if ( playerNum == 2) {return isWin;} // max value
+                    else if ( playerNum == 2) {return isWin;} // min value
                     break;
                 }
             
@@ -933,9 +888,9 @@ public class gameBoard extends JFrame implements ActionListener
                 {
                     isWin = true; 
                     //displayBoard(state);
-                    JOptionPane.showMessageDialog(self, "INCREASING DIAGONAL WINNER IS PLAYER "  + playerNum + " wining move: row " + r + " column" + c);
+                    JOptionPane.showMessageDialog(self, "INCREASING DIAGONAL WINNER IS PLAYER "  + playerNum );
                     if ( playerNum == 1) {return isWin;} // max value
-                    else if ( playerNum == 2) {return isWin;} // max value
+                    else if ( playerNum == 2) {return isWin;} // min value
                     break;
                 }
             
@@ -1273,15 +1228,12 @@ public class gameBoard extends JFrame implements ActionListener
             }
         
         }
-        //System.out.println("heuristic end");
+        
         return score;
 
     }
 
     /* --------------------------------------------------THE ALGORITHM------------------------------------------------------------------- */
-    // still issues with predictability.
-    // add in some randomness, especially with CPU's first move, randomness can also be added in to determining the best move
-    // may help resolve any ties with multiple moves with the same best heuristic
     int AlphaBeta(int[][] state, int depth, int alpha, int beta, boolean isMaximizingPlayer, int[] lastMove)
     {
         
@@ -1316,12 +1268,12 @@ public class gameBoard extends JFrame implements ActionListener
                     {
                         if (state[actions[a]][r] == 0)
                         {
-                            state[actions[a]][r] = 1; //FIXME
+                            state[actions[a]][r] = 1;
 
                             score = AlphaBeta(state, depth - 1, alpha, beta, false, lastMove);
                             maxScore = Math.max(maxScore, score);
                             alpha = Math.max(alpha, maxScore);
-                            state[actions[a]][r] = 0; // reset the change made  //FIXME
+                            state[actions[a]][r] = 0; // reset the change made
                             
                             if (beta <= alpha){ break; }
                         }
@@ -1329,7 +1281,7 @@ public class gameBoard extends JFrame implements ActionListener
                 }
 
             }
-            //System.out.println("algo end");
+            
             return maxScore;  
         }
 
@@ -1350,34 +1302,36 @@ public class gameBoard extends JFrame implements ActionListener
                     {
                         if (state[actions[a]][r] == 0)
                         {
-                            state[actions[a]][r] = 2; //FIXME
+                            state[actions[a]][r] = 2;
                             
                             score = AlphaBeta(state, depth - 1, alpha, beta, true, lastMove);
                             minScore = Math.min(minScore, score);
                             beta = Math.min(beta, minScore);
-                            state[actions[a]][r] = 0; // reset the change made //FIXME
+                            state[actions[a]][r] = 0; // reset the change made 
                             
                             if (beta <= alpha){ break; }
-                            break;
+                            
                         }
                     }
                 }
 
             }
-            //System.out.println("algo end");
+            
             return minScore;  
         }  
     } 
 
     int[] ACTIONS(int[][] occupiedSpacesN, int[] lastMove, boolean isMaximizingPlayer)
     { 
+        // returns a list of the possible actions during a given state, these will be listed as available column numbers
+
         int playerNum = 0;
         if (isMaximizingPlayer){playerNum = 1;}
         else{playerNum = 2;}
-        //System.out.println("Actions");
+        
         int[] availableActions = {7, 7, 7, 7, 7, 7, 7}; // 7 will act as a sentinel since it is an int but not a valid column number
         int actionCounter = 0;
-        // returns a list of the possible actions during a given state, these will be listed as available column numbers
+        
 
         // choose an available row from the specified column
         for (int c = 0; c < 7; c++) // check each column that has an available spot
@@ -1396,10 +1350,30 @@ public class gameBoard extends JFrame implements ActionListener
 
         // attempt to reorder the actions array to prioritize moves at or close to the column that the last move was in
         int temp, x = 0, y = 1, z = 2; //openSpaces = 0, blocked = 0;
+        int[] localMoves = {7,7,7};
 
-        int[] localMoves = {lastMove[1], (lastMove[1]-1), (lastMove[1]+1)};  // moves to prioritize if they are available
+        if ((lastMove[1] >= 1) && (lastMove[1] <= 5))
+        {
+            localMoves[0] = lastMove[1];
+            localMoves[1] =  (lastMove[1]-1);
+            localMoves[2] = (lastMove[1]+1);  // moves to prioritize if they are available
+        }
+        else if (lastMove[1] == 0)
+        {
+            localMoves[0] = lastMove[1];
+            localMoves[1] =  (lastMove[1]+1);
+            localMoves[2] = (lastMove[1]+2);  // moves to prioritize if they are available
+        }
+        else if (lastMove[1] == 6)
+        {
+            localMoves[0] = lastMove[1];
+            localMoves[1] =  (lastMove[1]-1);
+            localMoves[2] = (lastMove[1]-2);  // moves to prioritize if they are available
+        }
 
-        int[][] openAndBlocked  = {isBlocked (playerNum, localMoves[0]), isBlocked (playerNum, localMoves[1]), isBlocked (playerNum, localMoves[2])};
+        
+
+        int[][] openAndBlocked  = {isBlocked (playerNum, localMoves[0], occupiedSpacesN), isBlocked (playerNum, localMoves[1], occupiedSpacesN), isBlocked (playerNum, localMoves[2], occupiedSpacesN)};
 
         int[] localMoveOrder = {7, 7, 7};
 
@@ -1427,7 +1401,7 @@ public class gameBoard extends JFrame implements ActionListener
             }
             else if ((localMoveOrder[t] == 7) && (localMoveOrder[0] != 2) && (localMoveOrder[1] != 2) && (localMoveOrder[2] != 2))
             {
-                localMoveOrder[t] = 1;
+                localMoveOrder[t] = 2;
             }
             
         }
@@ -1463,16 +1437,13 @@ public class gameBoard extends JFrame implements ActionListener
             }
             
         }
-
-        //JOptionPane.showMessageDialog(self,availableActions[0]+" "+ availableActions[1]+" "+availableActions[2]+" "+availableActions[3]+" "+ availableActions[4] +" "+availableActions[5]+" "+ availableActions[6]);
         return availableActions;
 
     }
 
-    int[] isBlocked (int playerNum, int column)
+    int[] isBlocked (int playerNum, int column, int occupiedSpacesN[][])
     {
         int openSpaces = 0, blocked = 0;
-        // if there is no more room in the column-- set the x, y, z to different values, (prioritize y and z)
         for ( int r = 0; r < 6; r++)
         {
             if (occupiedSpacesN[column][r] == 0)
@@ -1489,7 +1460,6 @@ public class gameBoard extends JFrame implements ActionListener
         }
 
         int[] openAndBlocked = {openSpaces, blocked};
-        //JOptionPane.showMessageDialog(self, openSpaces);
         return openAndBlocked;
         
     }

@@ -1,6 +1,15 @@
+// Angelina Toste
+// Connect Four Intelligent Agent Command Line Game Board
 import java.util.*;
 
-public class commandLineGameBoard 
+import javax.swing.*;
+import java.util.*;
+
+import java.awt.*;
+
+import java.awt.event.*; 
+
+public class commandLineGameBoard extends JFrame implements ActionListener
 {
 
     private static final int ROWSIZE = 6;
@@ -12,7 +21,7 @@ public class commandLineGameBoard
     int userTurnCounter = 0, CPUTurnCounter = 0;
     int userPoints = 100, CPUPoints = -100;
     int[] lastMove = {7, 7};
-    //private static final int MAX_VALUE = 100
+    int[] CPULastMove = {7, 7};
 
     
     commandLineGameBoard()
@@ -58,59 +67,116 @@ public class commandLineGameBoard
     {
         if (playerMoveMade)
         {
-            int depth = ROWSIZE * COLSIZE;
-
-            int[] utilityMovePair = AlphaBeta(occupiedSpacesN, depth, MIN_VALUE, MAX_VALUE, false, lastMove);
-
-            int move = utilityMovePair[1];
-
-            System.out.println(utilityMovePair[0]+" "+ utilityMovePair[1]);
-
-            //int[] move = new int[2]; // format is {row, column}
-
-            // choose a random column
-            //Random randCol = new Random();
-            //move[1] = randCol.nextInt(7);
-           
-            // choose an available row from the specified column
-            for ( int r = 5; r >= 0; r--)
+            // make the cpus first move random 
+            if (CPUTurnCounter == 0)
             {
-                if (occupiedSpacesN[move][r] == 0)
-                { // if the lowest row in the column is empty
-                    // assign it to whose turn it is
-                    // in this case, the column buttons are only for use of player 1 (the human player)
+                int[] move = new int[2]; // format is {row, column}
 
-                    // set the occupied space to 2 to represent player 2's piece
-                    occupiedSpacesN[move][r] = 2;
-                    lastMove[0] = r;
-                    lastMove[1] = move;
-
-
-                    break;
-                }
-                /* there should already be checking in place to find all possible actions. dont need to check if something is possible, we know
-                else if (r == 0)
+                // choose a random column
+                Random randCol = new Random();
+                move[1] = randCol.nextInt(7);
+           
+                // choose an available row from the specified column
+                for ( int r = 5; r >= 0; r--)
                 {
-                    System.out.println("Choosing a new column!");
-                    move[1] = randCol.nextInt(7);
-                    r = 5;
-                }
-                */
-            }
+                    if (occupiedSpacesN[move[1]][r] == 0)
+                    { // if the lowest row in the column is empty
+                        // assign it to whose turn it is
+                        // in this case, the column buttons are only for use of player 1 (the human player)
 
-            playerMoveMade = false;
-            CPUTurnCounter++;
-             
-            if  (CPUTurnCounter > 3 && isWin(false, occupiedSpacesN, lastMove))
+                        // set the occupied space to 2 to represent player 2's piece
+                        occupiedSpacesN[move[1]][r] = 2;
+                        System.out.println("row "+ move[0] + " col " + move[1]);
+                        lastMove[0] = r;
+                        lastMove[1] = move[1];
+                        CPULastMove[0] = r;
+                        CPULastMove[1] = move[1];
+                        playerMoveMade = false;
+                        CPUTurnCounter++;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                int depth = ROWSIZE * COLSIZE;
+
+                int[] move = nextMove(occupiedSpacesN, depth, MIN_VALUE, MAX_VALUE, false);
+
+                occupiedSpacesN[move[1]][move[0]] = 2;
+                lastMove[0] = move[0];
+                lastMove[1] = move[1];
+                CPULastMove[0] = move[0];
+                CPULastMove[1] = move[1];
+
+                System.out.println("row "+ move[0] + " col " + move[1]);
+                playerMoveMade = false;
+            
+                CPUTurnCounter ++;
+
+            }
+            
+            if  ( CPUTurnCounter > 3 && isWin( false, occupiedSpacesN, lastMove))
             {
                 System.out.println("done");
                 System.exit(0);
-                //clearBoard(occupiedSpacesN, columns);
             }
+            
             
         }   
           
         return CPUTurnCounter;  
+    }
+    public int[] nextMove(int[][] state, int depth, int alpha, int beta, boolean isMaximizingPlayer) // returns an integer array of row, col, and the score
+    {
+        // use this to return an array for the move 
+        int bestScore = MAX_VALUE; //unreachably low score to maximize against
+        
+        
+        // collection of possible columns to choose
+        int [] actions = ACTIONS(state, CPULastMove, isMaximizingPlayer);
+        int[] address = {7, 7, 7};
+        //int[][] possibleAddress = new int[actions.length][3]; //will contain the row and column of the best square to select
+        //int addressCapacity = 0;
+        //iterate over the available columns to place a tile
+
+        for (int a = 0; a < actions.length; a++)
+        {
+            if (actions[a] < 7)
+            {
+
+                //insert the playerNum into the specified column
+                for ( int r = 5; r >= 0; r--)
+                {
+                        if (state[actions[a]][r] == 0)
+                        {
+                            //int score = AlphaBeta(state, depth, alpha, beta, isMaxixingPlayer, lastMove);
+                            int score = AlphaBeta(state, depth, alpha, beta, isMaximizingPlayer, lastMove); //call the minimax on each empty score for the opponent, who is minimizing
+                            //System.out.println(score);
+                            state[actions[a]][r] = 2;
+
+                            if(score < bestScore) // old score < bestScore
+                            {
+                                //System.out.println(score);
+                                bestScore = score;
+                                address[0] = r;
+                                address[1] = actions[a];
+                                address[2] =  score; // row, column, score
+                               
+                            }
+                            state[actions[a]][r] = 0;
+                            break;
+                        }
+                }
+            }
+        }
+
+        if (address[0] == 7)
+        {
+            System.out.println("Address is 7");
+        }
+
+        return address;
     }
     public void displayBoard(int[][] occupiedSpacesN)
     {
@@ -145,6 +211,7 @@ public class commandLineGameBoard
                     lastMove[0] = r;
                     lastMove[1] = colNum;
                     //invokeAndWait();
+
                     playerMoveMade = true;
                     break;
                 }
@@ -174,12 +241,6 @@ public class commandLineGameBoard
     public Boolean isWin(boolean isMaximizingPlayer, int[][] state, int[] lastMove) 
     {
         
-        
-        //int tilesPlayed,
-        // purpose: check if there are more than 4 tiles played by each player, check for col row and diag rows of 4
-        // parameters 
-            //tilesPlayed - num of tiles played to determine if there are enough tiles for 4 to be in a row
-            //playerNum - the player that is being checked for a win
         // return  boolean true if a win exists
         Boolean isWin = false;
 
@@ -197,7 +258,7 @@ public class commandLineGameBoard
                 inACol = 0;
                 break;
             } 
-            else if ( inACol == 0 && state[lastMove[1]][r] == playerNum) 
+            else if ( inACol == 0 && (state[lastMove[1]][r] == playerNum))
             {
                 inACol++;
             }
@@ -484,6 +545,7 @@ public class commandLineGameBoard
 
     private static int heuristicScore(int[][] state, int[] lastMove, boolean isMaximizingPlayer)
     {
+        // FIXME why is it not affected by the inital placement of it's last move.
         //System.out.println("heuristic start");
         // point system
         // 2 point for block 2 in a row
@@ -786,105 +848,101 @@ public class commandLineGameBoard
     }
 
     /* --------------------------------------------------THE ALGORITHM------------------------------------------------------------------- */
-
-    //issues with the return values of this function. how is the score being used ?
-    int[] AlphaBeta(int[][] state, int depth, int alpha, int beta, boolean isMaximizingPlayer, int[] lastMove)
+    // still issues with predictability.
+    // add in some randomness, especially with CPU's first move, randomness can also be added in to determining the best move
+    // may help resolve any ties with multiple moves with the same best heuristic
+    int AlphaBeta(int[][] state, int depth, int alpha, int beta, boolean isMaximizingPlayer, int[] lastMove)
     {
-        //System.out.println("algo start");
-        int[] utilityMovePair = new int[2]; //(value, move) //FIXME doing nothing with this
-        int score = heuristicScore(state, lastMove, isMaximizingPlayer);  //FIXME doing nothing with this
-        utilityMovePair[0] = score; // added
+        
+        int score = 0;
+        if (isMaximizingPlayer)
+        {
+            score= heuristicScore(state, lastMove, isMaximizingPlayer);
+        }
+        else
+        {
+            score= heuristicScore(state, CPULastMove, isMaximizingPlayer);
+        }
 
         if (depth == 0 || score == MAX_VALUE || score == MIN_VALUE)  
-        {return utilityMovePair; } //? need to return an int array
-        else if (depth == 30) 
-        {return utilityMovePair; }//? need to return an int array
-
+        {return score; }
+        else if (depth == 37) 
+        {return score; }
         if (isMaximizingPlayer) 
         {  
             int maxScore = MIN_VALUE;  
-            int[] maxScoreMove = new int[2]; //FIXME doing nothing with this
 
             // for each a in game.ACTIONS(state) do
-            int [] actions = ACTIONS(state);
+            int [] actions = ACTIONS(state, lastMove, isMaximizingPlayer);
 
             for (int a = 0; a < actions.length; a++)
             {
                 if (actions[a] < 7)
                 {
-                    int rowValue = 0;
+
                     //insert a 1 into the specified column
                     for ( int r = 5; r >= 0; r--)
                     {
                         if (state[actions[a]][r] == 0)
                         {
                             state[actions[a]][r] = 1;
-                            rowValue = r;
-                            break;
+
+                            score = AlphaBeta(state, depth - 1, alpha, beta, false, lastMove);
+                            maxScore = Math.max(maxScore, score);
+                            alpha = Math.max(alpha, maxScore);
+                            state[actions[a]][r] = 0; // reset the change made
+                            
+                            if (beta <= alpha){ break; }
                         }
                     }
-                    //set maxScore to the max of maxscore vs the next depth for the min player
-                    int[] minScoreMove = AlphaBeta(state, depth - 1, alpha, beta, false, lastMove);
-                    maxScore = Math.max(maxScore, minScoreMove[0]);
-                    maxScoreMove[0] = maxScore;  //added
-                    // set alpha to the maximum of alpha vs the maxScore
-                    alpha = Math.max(alpha, maxScore);
-
-                    //reset the changed value to 0
-                    state[actions[a]][rowValue] = 0;
-                    maxScoreMove[1] = actions[a];//added
-                    if (beta <= alpha) {break;}
                 }
 
             }
             //System.out.println("algo end");
-            return maxScoreMove;  
+            return maxScore;  
         }
 
         else 
         {  
             int minScore = MAX_VALUE;  
-            int[] minScoreMove = new int[2]; // FIXME doing nothing with this
 
             // for each a in game.ACTIONS(state) do
-            int [] actions = ACTIONS(state);
+            int [] actions = ACTIONS(state, CPULastMove, isMaximizingPlayer);
 
             for (int a = 0; a < actions.length; a++)
             {
                 if (actions[a] < 7)
                 {
-                    int rowValue = 0;
+
                     //insert a 2 into the specified column
                     for ( int r = 5; r >= 0; r--)
                     {
                         if (state[actions[a]][r] == 0)
                         {
                             state[actions[a]][r] = 2;
-                            rowValue = r;
-                            break;
+                            
+                            score = AlphaBeta(state, depth - 1, alpha, beta, true, lastMove);
+                            minScore = Math.min(minScore, score);
+                            beta = Math.min(beta, minScore);
+                            state[actions[a]][r] = 0; // reset the change made
+                            
+                            if (beta <= alpha){ break; }
+                            
                         }
                     }
-                    //set minScore to the min of minscore vs the next depth for the max player
-                    int[] maxScoreMove = AlphaBeta(state, depth - 1, alpha, beta, true, lastMove);
-                    minScore = Math.min(minScore, maxScoreMove[0]);  
-                    minScoreMove[0] = minScore; //added
-                    // set beta to the minimum of alpha vs the minScore
-                    beta = Math.min(beta, minScore);
-
-                    //reset the changed value to 0
-                    state[actions[a]][rowValue] = 0;
-                    minScoreMove[1] = actions[a]; //added
-                    if (beta <= alpha) {break;}
                 }
 
             }
             //System.out.println("algo end");
-            return minScoreMove;  
+            return minScore;  
         }  
     } 
 
-    int[] ACTIONS(int[][] occupiedSpacesN)
+    int[] ACTIONS(int[][] occupiedSpacesN, int[] lastMove, boolean isMaximizingPlayer)
     { 
+        int playerNum = 0;
+        if (isMaximizingPlayer){playerNum = 1;}
+        else{playerNum = 2;}
         //System.out.println("Actions");
         int[] availableActions = {7, 7, 7, 7, 7, 7, 7}; // 7 will act as a sentinel since it is an int but not a valid column number
         int actionCounter = 0;
@@ -901,21 +959,130 @@ public class commandLineGameBoard
                     actionCounter++;
                     break;
                 }
-                //else if (r == 0)
-                //{
-                  //  r = 5;
-                //}
+
             }
         }
-        //System.out.println("Actions end");
-        //for (int x = 0; x < availableActions.length; x++)
-        //{
-            //System.out.print(availableActions[x]);
-        //}
-        //System.out.println();
+
+        // attempt to reorder the actions array to prioritize moves at or close to the column that the last move was in
+        int temp, x = 0, y = 1, z = 2; //openSpaces = 0, blocked = 0;
+        int[] localMoves = {7,7,7};
+
+        if ((lastMove[1] >= 1) && (lastMove[1] <= 5))
+        {
+            localMoves[0] = lastMove[1];
+            localMoves[1] =  (lastMove[1]-1);
+            localMoves[2] = (lastMove[1]+1);  // moves to prioritize if they are available
+        }
+        else if (lastMove[1] == 0)
+        {
+            localMoves[0] = lastMove[1];
+            localMoves[1] =  (lastMove[1]+1);
+            localMoves[2] = (lastMove[1]+2);  // moves to prioritize if they are available
+        }
+        else if (lastMove[1] == 6)
+        {
+            localMoves[0] = lastMove[1];
+            localMoves[1] =  (lastMove[1]-1);
+            localMoves[2] = (lastMove[1]-2);  // moves to prioritize if they are available
+        }
+
+        
+
+        int[][] openAndBlocked  = {isBlocked (playerNum, localMoves[0], occupiedSpacesN), isBlocked (playerNum, localMoves[1], occupiedSpacesN), isBlocked (playerNum, localMoves[2], occupiedSpacesN)};
+
+        int[] localMoveOrder = {7, 7, 7};
+
+
+        for (int t = 0; t < 3; t++)
+        {
+            // if a move is blocked
+            if ((openAndBlocked[t][0] < 4) && (openAndBlocked[t][1] == 1))
+            {
+                localMoveOrder[t] = availableActions.length-(t+1);
+            }
+            
+        }
+
+        for (int t = 0; t < 3; t++)
+        {
+            // if a move is blocked
+            if ((localMoveOrder[t] == 7) && (localMoveOrder[0] != 0) && (localMoveOrder[1] != 0) && (localMoveOrder[2] != 0))
+            {
+                localMoveOrder[t] = 0;
+            }
+            else if ((localMoveOrder[t] == 7) && (localMoveOrder[0] != 1) && (localMoveOrder[1] != 1) && (localMoveOrder[2] != 1))
+            {
+                localMoveOrder[t] = 1;
+            }
+            else if ((localMoveOrder[t] == 7) && (localMoveOrder[0] != 2) && (localMoveOrder[1] != 2) && (localMoveOrder[2] != 2))
+            {
+                localMoveOrder[t] = 2;
+            }
+            
+        }
+
+        x = localMoveOrder[0];
+        y = localMoveOrder[1];
+        z = localMoveOrder[2];
+
+        // orders the columns based on the ordering provided through checking for blocks.
+
+        for (int a = 0; a < availableActions.length; a++)
+        {
+            if (availableActions[a] == (lastMove[1] - 1))
+            {
+                // swap the current action with the one in the second position in the array
+                temp = availableActions[y];
+                availableActions[y] = availableActions[a];
+                availableActions[a] = temp;
+            }
+            else if (availableActions[a] == lastMove[1])
+            {
+                // swap the current action with the one in the first position in the array
+                temp = availableActions[x];
+                availableActions[x] = availableActions[a];
+                availableActions[a] = temp;
+            }
+            else if (availableActions[a] == (lastMove[1] + 1))
+            {
+                // swap the current action with the one in the second position in the array
+                temp = availableActions[z];
+                availableActions[z] = availableActions[a];
+                availableActions[a] = temp;
+            }
+            
+        }
+
+        //JOptionPane.showMessageDialog(self,availableActions[0]+" "+ availableActions[1]+" "+availableActions[2]+" "+availableActions[3]+" "+ availableActions[4] +" "+availableActions[5]+" "+ availableActions[6]);
         return availableActions;
 
     }
+
+    int[] isBlocked (int playerNum, int column, int occupiedSpacesN[][])
+    {
+        int openSpaces = 0, blocked = 0;
+        // if there is no more room in the column-- set the x, y, z to different values, (prioritize y and z)
+        for ( int r = 0; r < 6; r++)
+        {
+            if (occupiedSpacesN[column][r] == 0)
+            {
+                openSpaces++;
+            }
+            else if (occupiedSpacesN[column][r] != playerNum)
+            {
+               blocked++;
+               break;
+            }
+            
+
+        }
+
+        int[] openAndBlocked = {openSpaces, blocked};
+        //JOptionPane.showMessageDialog(self, openSpaces);
+        return openAndBlocked;
+        
+    }
+
     public static void main(String[] args)
     {
         //int userTurnCounter = 0, CPUTurnCounter = 0;
@@ -935,3 +1102,4 @@ public class commandLineGameBoard
     }
 
 }
+
